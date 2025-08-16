@@ -1,0 +1,71 @@
+<!-- Login -->
+<div class="login-container">
+  <div class="header">
+    <img
+      src="/assets/img/login-img.png"
+      alt="Imagem de indústria"
+      class="auth-img"
+    />
+  </div>
+
+  <div class="login-wrapper">
+    <img
+      src="/assets/img/logo_login_thinksus.png"
+      alt="Logo ThinkSus"
+      class="login-logo"
+    />
+
+    <form [formGroup]="form" (submit)="onSubmit()" class="login-card">
+      <label for="email" class="pb-2 fw-600 f-size-1rem l-spacing-1-68">{{
+        "LOGIN.EMAIL" | translate
+      }}</label>
+      <input
+        type="email"
+        class="w-100 mb-4"
+        formControlName="email"
+        placeholder="email@email.com"
+        autocomplete="off"
+        id="email"
+        name="email"
+      />
+
+      <label for="password" class="pb-2 fw-600 f-size-1rem l-spacing-1-68">{{
+        "LOGIN.PASSWORD" | translate
+      }}</label>
+      <div class="input-container mb-4">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="w-100"
+          formControlName="password"
+          placeholder="{{ 'LOGIN.INSERT_PASSWORD' | translate }}"
+          autocomplete="off"
+          id="password"
+          name="password"
+        />
+        <img
+          *ngIf="showPassword"
+          (click)="showPassword = false"
+          src="/assets/icon/eye.svg"
+          alt="Esconder senha"
+          class="input-icon cursor-pointer"
+        />
+        <img
+          *ngIf="!showPassword"
+          (click)="showPassword = true"
+          src="/assets/icon/eye-slash.svg"
+          alt="Mostrar senha"
+          class="input-icon cursor-pointer"
+        />
+      </div>
+
+      <button
+        class="secondary-brand-btn px-lg-5 d-block mx-auto w-100"
+        [disabled]="form.invalid"
+        type="submit"
+      >
+        {{ "LOGIN.SIGN_IN" | translate }}
+      </button>
+      <a routerLink="/register"> </a>
+    </form>
+  </div>
+</div>

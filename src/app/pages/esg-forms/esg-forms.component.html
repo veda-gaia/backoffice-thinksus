@@ -1,0 +1,105 @@
+<div class="card-score">
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Controle de Formulários</h2>
+      <p>Veja os dados dos formulários</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="btn-novo-usuario"
+      routerLink="/forms/forms-new"
+    >
+      Novo Formulário
+    </button>
+  </div>
+
+  <div class="tabela-container">
+    <table mat-table matSort [dataSource]="dataSource" class="full-width-table">
+      <ng-container matColumnDef="useractive">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-useractive"
+        ></th>
+        <td mat-cell *matCellDef="let form"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="segments">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-segments"
+        >
+          Segmentos
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ getSegmentName(form) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sector">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Setor
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.section.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="questions">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Nº de perguntas
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.questions?.length || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="documents">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Nº de documentos
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ countQuestionsWithDocumentNeeded(form) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef class="col-actions">Ações</th>
+        <td mat-cell *matCellDef="let form">
+          <button mat-icon-button [routerLink]="['/forms/forms-new', form._id]">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

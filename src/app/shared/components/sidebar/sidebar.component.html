@@ -1,0 +1,58 @@
+<button class="open-btn" [class.active]="sidebarOpen" (click)="toggleSidebar()">
+  <img src="/assets/icon/sidebar-btn.svg" alt="Abrir navegação" />
+</button>
+
+<aside class="sidebar-logged h-100" [class.active]="sidebarOpen">
+  <div class="w-100">
+    <button
+      class="bg-transparent p-3 pt-0 ps-0 border-0 shadow-none"
+      [class.active]="sidebarOpen"
+    >
+      <img src="/assets/icon/sidebar-btn.svg" alt="Abrir navegação" />
+    </button>
+
+    <nav class="pt-3 w-100">
+      <ul
+        class="m-0 p-0 d-flex align-items-start justify-content-start flex-column gap-2 w-100"
+      >
+        <li class="w-100">
+          <button class="nav-link-btn" (click)="navigateTo('/dashboard')">
+            <img src="/assets/icon/home.svg" alt="Home" />
+            {{ "SIDEBAR.DASHBOARD" | translate }}
+          </button>
+        </li>
+        <li class="w-100">
+          <button class="nav-link-btn" (click)="navigateTo('/documents')">
+            <img src="/assets/icon/assesment.svg" alt="Home" />
+            {{ "SIDEBAR.DOCUMENTS" | translate }}
+          </button>
+        </li>
+        <li class="w-100">
+          <button class="nav-link-btn" (click)="navigateTo('/forms')">
+            <img src="/assets/icon/control_forms.svg" alt="Home" />
+            {{ "SIDEBAR.FORMULARIOS" | translate }}
+          </button>
+        </li>
+        <li class="w-100">
+          <button class="nav-link-btn" (click)="navigateTo('/user-management')">
+            <img src="/assets/icon/control_users.png" alt="Home" />
+            {{ "SIDEBAR.USUARIOS" | translate }}
+          </button>
+        </li>
+
+        <li class="w-100">
+          <button class="nav-link-btn" (click)="navigateTo('/password')">
+            <img src="/assets/icon/use-instructions.svg" alt="Home" />
+            {{ "SIDEBAR.PASSWORD" | translate }}
+          </button>
+        </li>
+        <li class="w-100">
+          <a class="nav-link-btn cursor-pointer" (click)="logout()">
+            <img src="/assets/icon/logout.svg" alt="Sair" />
+            {{ "SIDEBAR.LOGOUT" | translate }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
