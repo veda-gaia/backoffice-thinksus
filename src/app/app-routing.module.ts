@@ -1,26 +1,31 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { AuthGuard } from './auth.guard';
-import { LoginComponent } from './pages/login/login.component';
-import { UserManagementComponent } from './pages/user-manegement/user-manegement.component';
-import { EsgFormsComponent } from './pages/esg-forms/esg-forms.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { DashboardComponent } from "./pages/dashboard/dashboard.component";
+import { AuthGuard } from "./auth.guard";
+import { LoginComponent } from "./pages/login/login.component";
+import { UserManagementComponent } from "./pages/user-manegement/user-manegement.component";
 
 const routes: Routes = [
+  { path: "login", component: LoginComponent },
+
   {
-    path: 'dashboard',
-    component: DashboardComponent,
+    path: "",
+    canActivateChild: [AuthGuard],
+    children: [
+      { path: "dashboard", component: DashboardComponent },
+      { path: "user-management", component: UserManagementComponent },
+      {
+        path: "forms",
+        loadChildren: () =>
+          import("./pages/esg-forms/esg-forms.module").then(
+            (m) => m.EsgFormsModule
+          ),
+      },
+      { path: "", redirectTo: "/login", pathMatch: "full" },
+    ],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'user-management', component: UserManagementComponent },
-  {
-    path: 'forms',
-    loadChildren: () =>
-      import('./pages/esg-forms/esg-forms.module').then(
-        (m) => m.EsgFormsModule,
-      ),
-  },
-  //{ path: '**', redirectTo: 'dashboard' },
+
+  { path: "**", redirectTo: "dashboard" },
 ];
 
 @NgModule({

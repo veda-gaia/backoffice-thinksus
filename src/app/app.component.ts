@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { AuthenticationService } from './services/authentication.service';
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { TranslateService } from "@ngx-translate/core";
+import { Subscription } from "rxjs";
+import { AuthenticationService } from "./services/authentication.service";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   openSelectorLanguage = false;
@@ -14,10 +14,10 @@ export class AppComponent {
 
   constructor(
     private translateService: TranslateService,
-    public authService: AuthenticationService,
+    public authService: AuthenticationService
   ) {
-    const userLang = navigator.language || 'pt';
-    const languageCode = userLang.split('-')[0];
+    const userLang = navigator.language || "pt";
+    const languageCode = userLang.split("-")[0];
     this.selectedLanguage = languageCode;
 
     this.translateService.setDefaultLang(languageCode);
@@ -34,6 +34,6 @@ export class AppComponent {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');
+    return !!localStorage.getItem("user");
   }
 }

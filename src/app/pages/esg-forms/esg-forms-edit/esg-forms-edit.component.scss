@@ -122,3 +122,20 @@
   flex-grow: 0;
   color: white;
 }
+
+.field-with-button {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* espaço entre campo e botão */
+  margin-bottom: 16px;
+}
+
+.field-with-button .select-container,
+.field-with-button .select-container-list {
+  width: 30%; /* mantém o mesmo tamanho definido antes */
+}
+
+.field-with-button .btn-new-question {
+  white-space: nowrap;
+  height: 40px;
+}

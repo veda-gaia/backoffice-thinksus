@@ -18,46 +18,52 @@
 
   <form [formGroup]="esgForm" (ngSubmit)="onSubmit()">
     <p>Setor</p>
-    <div class="select-container">
-      <select formControlName="sectionId">
-        <option [ngValue]="null" disabled>Selecione o setor</option>
-        <option *ngFor="let sec of sections$ | async" [value]="sec._id">
-          {{ sec.name }}
-        </option>
-      </select>
-    </div>
 
-    <button
-      type="button"
-      mat-raised-button
-      color="primary"
-      class="btn-new-question"
-      (click)="openSectionEditModal()"
-    >
-      Adicionar novo Setor
-    </button>
+    <div class="field-with-button">
+      <div class="select-container">
+        <select formControlName="sectionId">
+          <option [ngValue]="null" disabled>Selecione o setor</option>
+          <option *ngFor="let sec of sections$ | async" [value]="sec._id">
+            {{ sec.name }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        class="btn-new-question"
+        (click)="openSectionEditModal()"
+      >
+        Adicionar novo Setor
+      </button>
+    </div>
 
     <p>Segmentos</p>
-    <div class="select-container select-container-list">
-      <mat-selection-list formControlName="segmentIds">
-        <mat-list-option
-          *ngFor="let seg of segments$ | async"
-          [value]="seg._id"
-        >
-          {{ seg.name }}
-        </mat-list-option>
-      </mat-selection-list>
-    </div>
 
-    <button
-      type="button"
-      mat-raised-button
-      color="primary"
-      class="btn-new-question"
-      (click)="openSegmentEditModal()"
-    >
-      Adicionar novo Segmento
-    </button>
+    <div class="field-with-button">
+      <div class="select-container select-container-list">
+        <mat-selection-list formControlName="segmentIds">
+          <mat-list-option
+            *ngFor="let seg of segments$ | async"
+            [value]="seg._id"
+          >
+            {{ seg.name }}
+          </mat-list-option>
+        </mat-selection-list>
+      </div>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        class="btn-new-question"
+        (click)="openSegmentEditModal()"
+      >
+        Adicionar novo Segmento
+      </button>
+    </div>
   </form>
 
   <div class="card-score-info">
