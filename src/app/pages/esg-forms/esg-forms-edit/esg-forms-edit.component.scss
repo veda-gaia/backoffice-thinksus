@@ -8,15 +8,19 @@
 
 .select-container-list {
   border: 1px solid #ccc;
+  max-height: 170px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 .select-container select {
-  border-radius: 4px; /* cantos arredondados */
-  padding: 8px; /* espaço interno */
+  border-radius: 4px;
+  padding: 8px;
   display: block;
   background-color: #fff;
   padding: 0 12px;
-  appearance: none; /* remove seta padrão */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   height: 32px;
@@ -138,4 +142,76 @@
 .field-with-button .btn-new-question {
   white-space: nowrap;
   height: 40px;
+}
+
+/* Chrome / Edge / Safari */
+.select-container-list::-webkit-scrollbar {
+  width: 12px; /* largura da barra */
+}
+
+.select-container-list::-webkit-scrollbar-thumb {
+  background-color: #1c4532; /* verde escuro */
+  border-radius: 6px;
+}
+
+.select-container-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Quando NÃO está selecionado: borda da caixinha */
+::ng-deep .mat-mdc-checkbox .mdc-checkbox__background {
+  border-color: #1c4532 !important;
+}
+
+/* Quando ESTÁ selecionado: fundo e borda */
+::ng-deep .mat-mdc-checkbox.mdc-checkbox--selected .mdc-checkbox__background {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+/* Cor do check (✓) */
+::ng-deep
+  .mat-mdc-checkbox.mdc-checkbox--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important;
+}
+
+/* Quando NÃO está selecionado: borda da caixinha */
+::ng-deep .mat-mdc-checkbox .mdc-checkbox__background {
+  border-color: #1c4532 !important;
+}
+
+/* Quando ESTÁ selecionado: fundo e borda */
+::ng-deep .mat-mdc-checkbox.mdc-checkbox--selected .mdc-checkbox__background {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+/* Cor do check (✓) */
+::ng-deep
+  .mat-mdc-checkbox.mdc-checkbox--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important;
+}
+
+/* ==== mat-selection-list usa pseudo-checkbox ==== */
+
+/* Caixa desmarcada */
+::ng-deep .mat-pseudo-checkbox {
+  border-color: #1c4532 !important;
+}
+
+/* Caixa marcada */
+::ng-deep .mat-pseudo-checkbox-checked {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+::ng-deep .mat-pseudo-checkbox-checked::after {
+  color: #fff !important;
+}
+
+.col-actions {
+  border: none !important;
+  background: white;
 }

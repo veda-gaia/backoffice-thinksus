@@ -4,42 +4,43 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-} from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, tap } from 'rxjs';
-import { QuestionInterface } from 'src/app/interfaces/forms/question.interface';
-import { SectionInterface } from 'src/app/interfaces/forms/section.interface';
-import { SegmentInterface } from 'src/app/interfaces/forms/segment.interface';
-import { SectionService } from 'src/app/services/sections.service';
-import { SegmentService } from 'src/app/services/segment.service';
-import { EsgFormsQuestionComponent } from '../esg-forms-question/esg-forms-question.component';
-import { EsgFormService } from 'src/app/services/esg-form.service';
-import { FormInterface } from 'src/app/interfaces/forms/form.interface';
-import { FormRegisterDto } from 'src/app/interfaces/forms/form-register-dto.interface';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EsgFormsSectionComponent } from '../esg-forms-section/esg-forms-section.component';
-import { EsgFormsSegmentComponent } from '../esg-forms-segment/esg-forms-segment.component';
+} from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { finalize, Observable, tap } from "rxjs";
+import { QuestionInterface } from "src/app/interfaces/forms/question.interface";
+import { SectionInterface } from "src/app/interfaces/forms/section.interface";
+import { SegmentInterface } from "src/app/interfaces/forms/segment.interface";
+import { SectionService } from "src/app/services/sections.service";
+import { SegmentService } from "src/app/services/segment.service";
+import { EsgFormsQuestionComponent } from "../esg-forms-question/esg-forms-question.component";
+import { EsgFormService } from "src/app/services/esg-form.service";
+import { FormInterface } from "src/app/interfaces/forms/form.interface";
+import { FormRegisterDto } from "src/app/interfaces/forms/form-register-dto.interface";
+import { ActivatedRoute, Router } from "@angular/router";
+import { EsgFormsSectionComponent } from "../esg-forms-section/esg-forms-section.component";
+import { EsgFormsSegmentComponent } from "../esg-forms-segment/esg-forms-segment.component";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
-  selector: 'app-esg-forms-edit',
-  templateUrl: './esg-forms-edit.component.html',
-  styleUrls: ['./esg-forms-edit.component.scss'],
+  selector: "app-esg-forms-edit",
+  templateUrl: "./esg-forms-edit.component.html",
+  styleUrls: ["./esg-forms-edit.component.scss"],
 })
 export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
   esgForm!: FormGroup;
   sections$!: Observable<SectionInterface[]>;
   segments$!: Observable<SegmentInterface[]>;
   displayedColumns: string[] = [
-    'question',
-    'dimension',
-    'area',
-    'weight',
-    'document',
-    'action',
+    "question",
+    "dimension",
+    "area",
+    "weight",
+    "document",
+    "action",
   ];
   dataSource = new MatTableDataSource<QuestionInterface>([]);
 
@@ -54,6 +55,7 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngAfterViewInit() {
@@ -68,30 +70,43 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
       segmentIds: [[]],
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id != '') this.setFormIdSession(id ?? '');
+    const id = this.route.snapshot.paramMap.get("id");
+    if (id != "") this.setFormIdSession(id ?? "");
 
     this.loadSection();
 
-    this.esgForm.get('sectionId')!.valueChanges.subscribe((id: string) => {
-      this.segments$ = this._segmentService.getbySection(id);
+    this.esgForm.get("sectionId")!.valueChanges.subscribe((id: string) => {
+      this.segments$ = this._segmentService.getbySection(
+        this.getFormIdSession(),
+        id
+      );
     });
 
     const formSessionId = this.getFormIdSession();
-    if (formSessionId != '') {
-      this._esgFormService.getbyID(formSessionId).subscribe({
-        next: (form) => {
-          this.esgForm.patchValue({
-            id: form._id,
-            sectionId: form.section._id,
-            segmentIds: form.segments.map((x) => x._id),
-          });
+    if (formSessionId != "") {
+      this.spinnerService.show();
+      this._esgFormService
+        .getbyID(formSessionId)
+        .pipe(
+          finalize(() => {
+            this.spinnerService.hide();
+          })
+        )
+        .subscribe({
+          next: (form) => {
+            this.esgForm.patchValue({
+              id: form._id,
+              sectionId: form.section._id,
+              segmentIds: form.segments.map((x) => x._id),
+            });
 
-          this.dataSource = new MatTableDataSource<QuestionInterface>(
-            form.questions,
-          );
-        },
-      });
+            this.dataSource = new MatTableDataSource<QuestionInterface>(
+              form.questions
+            );
+
+            this.dataSource.paginator = this.paginator;
+          },
+        });
     }
   }
 
@@ -101,50 +116,63 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
 
   loadSegment() {
     const esgFormValues = this.esgForm.value;
+    this.spinnerService.show();
 
     this.segments$ = this._segmentService
-      .getbySection(esgFormValues.sectionId)
+      .getbySection(this.getFormIdSession(), esgFormValues.sectionId)
       .pipe(
         tap((segments) => {
           const validSelected =
             esgFormValues.segmentIds?.filter((id: string) =>
-              segments.some((seg) => seg._id === id),
+              segments.some((seg) => seg._id === id)
             ) || [];
 
           this.esgForm.patchValue({
             segmentIds: validSelected,
           });
-        }),
+
+          finalize(() => {
+            this.spinnerService.hide();
+          });
+        })
       );
   }
 
   openUserEditModal(questionId?: string): void {
     const esgFormValues = this.esgForm.value;
+    this.spinnerService.show();
 
     const dto: FormRegisterDto = {
       sectionId: esgFormValues.sectionId,
       segments: esgFormValues.segmentIds,
     };
 
-    if (esgFormValues.id == null) {
-      this._esgFormService.register(dto).subscribe({
-        next: (data) => {
-          this.setFormIdSession(data._id);
-          this.openModal(data?._id);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    if (esgFormValues.id == null || esgFormValues.id == "") {
+      this._esgFormService
+        .register(dto)
+        .pipe(
+          finalize(() => {
+            this.spinnerService.hide();
+          })
+        )
+        .subscribe({
+          next: (data) => {
+            this.setFormIdSession(data._id);
+            this.openModal(data?._id);
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
     } else {
-      this.openModal(this.getFormIdSession() ?? '', questionId ?? '');
+      this.openModal(this.getFormIdSession() ?? "", questionId ?? "");
     }
   }
 
   openSectionEditModal(): void {
     const dialogSection = this.modalService.open(EsgFormsSectionComponent);
     dialogSection.result.then((result) => {
-      if (result === 'updated') {
+      if (result === "updated") {
         this.loadSection();
       }
     });
@@ -156,15 +184,13 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
     const dialogSegment = this.modalService.open(EsgFormsSegmentComponent);
     dialogSegment.componentInstance.sectionId = esgFormValues.sectionId;
     dialogSegment.result.then((result) => {
-      if (result === 'updated') {
+      if (result === "updated") {
         this.loadSegment();
       }
     });
   }
 
   onSubmit() {
-    //if (this.esgForm.invalid) return;
-
     const esgFormValues = this.esgForm.value;
 
     const dto: FormRegisterDto = {
@@ -175,8 +201,8 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this._esgFormService.register(dto).subscribe({
       next: (data) => {
-        this.setFormIdSession('');
-        this.router.navigate(['/forms']);
+        this.setFormIdSession("");
+        this.router.navigate(["/forms"]);
       },
       error: (err) => {
         console.log(err);
@@ -189,14 +215,14 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
     dialogUser.componentInstance.formId = formId;
     dialogUser.componentInstance.questionId = questionId;
     dialogUser.result.then((result) => {
-      if (result === 'updated') {
+      if (result === "updated") {
         this.updateQuestions(formId);
       }
     });
   }
 
   updateQuestions(esgFormId?: string): void {
-    if (esgFormId == '') return;
+    if (esgFormId == "") return;
 
     this._esgFormService.listQuestionbyForm(esgFormId!).subscribe({
       next: (data) => {
@@ -206,14 +232,20 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   setFormIdSession(esgFormId?: string) {
-    sessionStorage.setItem('currentFormId', esgFormId ?? '');
+    sessionStorage.setItem("currentFormId", esgFormId ?? "0");
+
+    this.esgForm.patchValue({
+      id: esgFormId,
+    });
   }
 
   getFormIdSession() {
-    return sessionStorage.getItem('currentFormId') ?? '';
+    var returnData = sessionStorage.getItem("currentFormId") ?? "0";
+
+    return returnData != "" ? returnData : "0";
   }
 
   ngOnDestroy(): void {
-    localStorage.removeItem('currentFormId');
+    localStorage.removeItem("currentFormId");
   }
 }

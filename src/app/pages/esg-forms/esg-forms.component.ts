@@ -1,25 +1,27 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormInterface } from 'src/app/interfaces/forms/form.interface';
-import { EsgFormService } from 'src/app/services/esg-form.service';
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgxSpinnerService } from "ngx-spinner";
+import { finalize } from "rxjs";
+import { FormInterface } from "src/app/interfaces/forms/form.interface";
+import { EsgFormService } from "src/app/services/esg-form.service";
 
 @Component({
-  selector: 'app-esg-forms',
-  templateUrl: './esg-forms.component.html',
-  styleUrls: ['./esg-forms.component.scss'],
+  selector: "app-esg-forms",
+  templateUrl: "./esg-forms.component.html",
+  styleUrls: ["./esg-forms.component.scss"],
 })
 export class EsgFormsComponent implements AfterViewInit, OnInit {
   filteredList: any[] = [];
   loading = true;
   displayedColumns: string[] = [
-    'segments',
-    'sector',
-    'questions',
-    'documents',
-    'action',
+    "segments",
+    "sector",
+    "questions",
+    "documents",
+    "action",
   ];
   dataSource = new MatTableDataSource<FormInterface>([]);
 
@@ -27,8 +29,8 @@ export class EsgFormsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private modalService: NgbModal,
     private _esgFormService: EsgFormService,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngAfterViewInit() {
@@ -41,11 +43,20 @@ export class EsgFormsComponent implements AfterViewInit, OnInit {
   }
 
   updateEsgforms(): void {
-    this._esgFormService.list().subscribe({
-      next: (data) => {
-        this.dataSource = new MatTableDataSource<FormInterface>(data);
-      },
-    });
+    this.spinnerService.show();
+    this._esgFormService
+      .list()
+      .pipe(
+        finalize(() => {
+          this.spinnerService.hide();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.dataSource = new MatTableDataSource<FormInterface>(data);
+          this.dataSource.paginator = this.paginator;
+        },
+      });
   }
   countQuestionsWithDocumentNeeded(form: any): number {
     return form.questions?.filter((q: any) => q.documentNeeded)?.length || 0;

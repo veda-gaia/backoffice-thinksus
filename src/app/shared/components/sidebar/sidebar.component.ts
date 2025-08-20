@@ -1,41 +1,39 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { CompanyService } from 'src/app/services/company.service';
-import { EsgRatingService } from 'src/app/services/esg-rating.service';
+import { Component } from "@angular/core";
+import { Router } from "@angular/router";
+import { CompanyService } from "src/app/services/company.service";
+import { EsgRatingService } from "src/app/services/esg-rating.service";
 import LocalStorageUtil, {
   LocalStorageKeys,
-} from 'src/app/util/localStorage.util';
-import { initialScoreArray } from 'src/app/util/initial-score-array.util';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize } from 'rxjs';
+} from "src/app/util/localStorage.util";
+import { initialScoreArray } from "src/app/util/initial-score-array.util";
+import { NgxSpinnerService } from "ngx-spinner";
+import { finalize } from "rxjs";
 
 @Component({
-  selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
+  selector: "app-sidebar",
+  templateUrl: "./sidebar.component.html",
+  styleUrls: ["./sidebar.component.scss"],
 })
 export class SidebarComponent {
   sidebarOpen = true;
-  verifyRequested: string = 'false';
+  verifyRequested: string = "false";
   companyScoreResponse: any;
-  classPerScore: string = '';
+  classPerScore: string = "";
 
   constructor(
     private router: Router,
 
-    private spinnerService: NgxSpinnerService,
+    private spinnerService: NgxSpinnerService
   ) {}
 
-  ngOnInit() {
-    this.spinnerService.show();
-  }
+  ngOnInit() {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
   logout() {
-    this.router.navigate(['/login']);
+    this.router.navigate(["/login"]);
     LocalStorageUtil.remove(LocalStorageKeys.user);
   }
 

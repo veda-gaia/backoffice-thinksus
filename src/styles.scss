@@ -247,7 +247,7 @@ body {
 body {
   font-family: "Raleway", sans-serif;
   overflow-y: auto;
-  max-width: 90%;
+  max-width: 100%;
 }
 
 .sans-font {
@@ -2849,17 +2849,27 @@ body {
     border: none;
   }
 
-  ::ng-deep .mat-table {
-    border-collapse: collapse;
+  /* Caixa marcada */
+  .mat-accent
+    .mdc-checkbox__native-control:checked
+    ~ .mdc-checkbox__background {
+    background-color: #1c4532 !important;
+    border-color: #1c4532 !important;
   }
 
-  ::ng-deep .mat-header-cell,
-  ::ng-deep .mat-cell {
-    border-right: none !important;
+  /* Caixa desmarcada */
+  .mat-accent
+    .mdc-checkbox__native-control:not(:checked)
+    ~ .mdc-checkbox__background {
+    border-color: #1c4532 !important;
+    background-color: #fff !important;
   }
 
-  .page-wrapper {
-    max-width: 90%; /* largura máxima 90% da tela */
-    margin: 0 auto; /* centraliza horizontalmente */
+  /* Check (✓) branco */
+  .mat-accent
+    .mdc-checkbox__native-control:checked
+    ~ .mdc-checkbox__background
+    .mdc-checkbox__checkmark-path {
+    stroke: #fff !important;
   }
 }
