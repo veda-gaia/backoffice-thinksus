@@ -1,0 +1,166 @@
+<div class="card-score">
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Novo Formulário</h2>
+      <p>Edite e veja o status das documentações</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="btn-voltar"
+      routerLink="/forms"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
+
+  <form [formGroup]="esgForm" (ngSubmit)="onSubmit()">
+    <p>Setor</p>
+
+    <div class="field-with-button">
+      <div class="select-container">
+        <select formControlName="sectionId">
+          <option [ngValue]="null" disabled>Selecione o setor</option>
+          <option *ngFor="let sec of sections$ | async" [value]="sec._id">
+            {{ sec.name }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        class="btn-new-question"
+        (click)="openSectionEditModal()"
+      >
+        Adicionar novo Setor
+      </button>
+    </div>
+
+    <p>Segmentos</p>
+
+    <div class="field-with-button">
+      <div class="select-container select-container-list">
+        <mat-selection-list formControlName="segmentIds">
+          <mat-list-option
+            *ngFor="let seg of segments$ | async"
+            [value]="seg._id"
+          >
+            {{ seg.name }}
+          </mat-list-option>
+        </mat-selection-list>
+      </div>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        class="btn-new-question"
+        (click)="openSegmentEditModal()"
+      >
+        Adicionar novo Segmento
+      </button>
+    </div>
+  </form>
+
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Perguntas do formulário</h2>
+    </div>
+    <button
+      mat-raised-button
+      color="primary"
+      class="btn-new-question"
+      (click)="openUserEditModal('')"
+      [disabled]="!esgForm.get('sectionId')?.value"
+    >
+      Adicionar pergunta
+    </button>
+  </div>
+
+  <div class="tabela-container">
+    <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+      <ng-container matColumnDef="useractive">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-useractive"
+        ></th>
+        <td mat-cell *matCellDef="let form"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="question">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Questão</th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dimension">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Dimensão</th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.dimension }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="area">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Área</th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.area.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Peso</th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.weight }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="document">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
+        <td mat-cell *matCellDef="let form">
+          <mat-icon [color]="form.documentNeeded ? 'primary' : 'warn'">
+            {{ form.documentNeeded ? "check_circle" : "cancel" }}
+          </mat-icon>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
+        <td mat-cell *matCellDef="let form">
+          <button
+            mat-icon-button
+            (click)="openUserEditModal(form._id)"
+            class="col-actions"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="btn submit-button add-form"
+    (click)="onSubmit()"
+    [disabled]="!esgForm.get('id')?.value"
+  >
+    Salvar Formulário
+  </button>
+</div>

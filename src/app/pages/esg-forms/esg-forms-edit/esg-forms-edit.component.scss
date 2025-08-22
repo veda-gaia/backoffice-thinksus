@@ -1,0 +1,217 @@
+.select-container {
+  width: 30%;
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 4px;
+  padding: 4px 0;
+}
+
+.select-container-list {
+  border: 1px solid #ccc;
+  max-height: 170px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.select-container select {
+  border-radius: 4px;
+  padding: 8px;
+  display: block;
+  background-color: #fff;
+  padding: 0 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 32px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.64);
+  border-radius: 4px;
+  outline: none;
+
+  /* espaço para a seta */
+  padding-right: 38px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #666 50%),
+    linear-gradient(135deg, #666 50%, transparent 50%),
+    linear-gradient(to right, #e1e6dd, #e1e6dd); /* barra cinza */
+  background-position:
+    calc(100% - 16px) center,
+    calc(100% - 10px) center,
+    calc(100% - 32px) center;
+  background-size:
+    6px 6px,
+    6px 6px,
+    1px 60%;
+  background-repeat: no-repeat;
+}
+
+/* Quando o item está selecionado */
+::ng-deep
+  .mat-mdc-list-option.mdc-list-item--selected
+  .mat-mdc-checkbox
+  .mdc-checkbox__native-control:enabled:checked
+  ~ .mdc-checkbox__background {
+  background-color: #1c4532 !important; /* fundo verde escuro */
+  border-color: #1c4532 !important; /* borda verde escuro */
+}
+
+/* Cor do checkmark (✓) */
+::ng-deep
+  .mat-mdc-list-option.mdc-list-item--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important; /* check branco */
+}
+
+.btn-new-question {
+  background-color: white;
+  font-weight: 600;
+  font-size: 16px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+/* Quando o item está selecionado */
+::ng-deep
+  .mat-mdc-list-option.mdc-list-item--selected
+  .mat-mdc-checkbox
+  .mdc-checkbox__native-control:enabled:checked
+  ~ .mdc-checkbox__background {
+  background-color: #1c4532 !important; /* fundo verde escuro */
+  border-color: #1c4532 !important; /* borda verde escuro */
+}
+
+/* Cor do checkmark (✓) */
+::ng-deep
+  .mat-mdc-list-option.mdc-list-item--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important; /* check branco */
+}
+
+.btn-new-question {
+  background-color: white;
+  font-weight: 600;
+  font-size: 16px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.btn-voltar {
+  background-color: white !important;
+  font-weight: 600;
+  display: flex;
+  border: none;
+  align-items: center; /* alinha ícone e texto verticalmente */
+}
+
+.btn-voltar mat-icon {
+  font-size: 20px; /* ajusta tamanho da seta */
+  margin-right: 6px; /* espaço entre seta e texto */
+  vertical-align: middle;
+}
+
+.add-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 24px;
+  gap: 8px;
+  width: 250px;
+  height: 40px;
+  background: #1c4532;
+  border-radius: 6px;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  color: white;
+}
+
+.field-with-button {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* espaço entre campo e botão */
+  margin-bottom: 16px;
+}
+
+.field-with-button .select-container,
+.field-with-button .select-container-list {
+  width: 30%; /* mantém o mesmo tamanho definido antes */
+}
+
+.field-with-button .btn-new-question {
+  white-space: nowrap;
+  height: 40px;
+}
+
+/* Chrome / Edge / Safari */
+.select-container-list::-webkit-scrollbar {
+  width: 12px; /* largura da barra */
+}
+
+.select-container-list::-webkit-scrollbar-thumb {
+  background-color: #1c4532; /* verde escuro */
+  border-radius: 6px;
+}
+
+.select-container-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Quando NÃO está selecionado: borda da caixinha */
+::ng-deep .mat-mdc-checkbox .mdc-checkbox__background {
+  border-color: #1c4532 !important;
+}
+
+/* Quando ESTÁ selecionado: fundo e borda */
+::ng-deep .mat-mdc-checkbox.mdc-checkbox--selected .mdc-checkbox__background {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+/* Cor do check (✓) */
+::ng-deep
+  .mat-mdc-checkbox.mdc-checkbox--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important;
+}
+
+/* Quando NÃO está selecionado: borda da caixinha */
+::ng-deep .mat-mdc-checkbox .mdc-checkbox__background {
+  border-color: #1c4532 !important;
+}
+
+/* Quando ESTÁ selecionado: fundo e borda */
+::ng-deep .mat-mdc-checkbox.mdc-checkbox--selected .mdc-checkbox__background {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+/* Cor do check (✓) */
+::ng-deep
+  .mat-mdc-checkbox.mdc-checkbox--selected
+  .mdc-checkbox__checkmark-path {
+  stroke: #fff !important;
+}
+
+/* ==== mat-selection-list usa pseudo-checkbox ==== */
+
+/* Caixa desmarcada */
+::ng-deep .mat-pseudo-checkbox {
+  border-color: #1c4532 !important;
+}
+
+/* Caixa marcada */
+::ng-deep .mat-pseudo-checkbox-checked {
+  background-color: #1c4532 !important;
+  border-color: #1c4532 !important;
+}
+
+::ng-deep .mat-pseudo-checkbox-checked::after {
+  color: #fff !important;
+}
+
+.col-actions {
+  border: none !important;
+  background: white;
+}

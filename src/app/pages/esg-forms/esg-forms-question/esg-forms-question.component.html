@@ -1,0 +1,110 @@
+<div class="modal-content user-edit-modal question-modal">
+  <div class="modal-header">
+    <h2 class="modal-title">
+      {{ isEditing ? "Editar pergunta" : "Adicionar nova pergunta" }}
+    </h2>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="closeModal()"
+      aria-label="Close"
+    ></button>
+  </div>
+
+  <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+      <div class="radio-group">
+        <label>
+          <input type="radio" value="E" formControlName="dimension" />
+          Ambiental
+        </label>
+        <label>
+          <input type="radio" value="S" formControlName="dimension" />
+          Social
+        </label>
+        <label>
+          <input type="radio" value="G" formControlName="dimension" />
+          Governança
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label class="field-label">Área</label>
+          <select class="field-control" formControlName="area">
+            <option value="">Selecione</option>
+            <option *ngFor="let a of areas$ | async" [value]="a._id">
+              {{ a.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Tipo</label>
+          <select class="field-control" formControlName="type">
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Questão</label>
+          <input
+            type="text"
+            class="field-control"
+            formControlName="question"
+            placeholder="Digite"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Peso</label>
+          <input type="number" class="field-control" formControlName="weight" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Descrição</label>
+          <textarea
+            class="field-control textarea"
+            formControlName="description"
+            placeholder="Digite"
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">ODS envolvido</label>
+          <div class="ods-box">
+            <label class="check" *ngFor="let ods of odsList">
+              <input
+                type="checkbox"
+                [checked]="questionForm.value.odsEnvolved.includes(ods.id)"
+                (change)="toggleOds(ods.id)"
+              />
+              <span>{{ ods.nome }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" formControlName="needDocument" />
+            <span>Precisa de documento comprobatório</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn cancel-button" (click)="closeModal()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="questionForm.invalid"
+        class="btn add-button-user"
+      >
+        {{ isEditing ? "Salvar" : "Adicionar" }}
+      </button>
+    </div>
+  </form>
+</div>

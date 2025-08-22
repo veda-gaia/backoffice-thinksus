@@ -1,0 +1,32 @@
+<ng-container *ngIf="isLoggedIn(); else onlyOutlet">
+  <div class="page-wrapper">
+    <app-header></app-header>
+
+    <div class="container pt-2" style="min-height: calc(100vh - 157px)">
+      <div class="row" style="min-height: calc(100vh - 157px)">
+        <div
+          class="both-container col-12 d-flex align-items-start"
+          style="min-height: calc(100vh - 157px)"
+        >
+          <div class="h-100 d-block" style="min-height: calc(100vh - 157px)">
+            <app-sidebar></app-sidebar>
+          </div>
+
+          <div class="router-logged-container">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-footer></app-footer>
+  </div>
+</ng-container>
+
+<ng-template #onlyOutlet>
+  <div class="page-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
+
+<ngx-spinner type="ball-pulse"></ngx-spinner>
