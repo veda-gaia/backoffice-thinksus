@@ -16,6 +16,10 @@ const routes: Routes = [
       { path: "dashboard", component: DashboardComponent },
       { path: "user-management", component: UserManagementComponent },
       {
+        path: "document-verification",
+        component: DocumentVerificationComponent,
+      },
+      {
         path: "forms",
         loadChildren: () =>
           import("./pages/esg-forms/esg-forms.module").then(
