@@ -4,6 +4,7 @@ import { DashboardComponent } from "./pages/dashboard/dashboard.component";
 import { AuthGuard } from "./auth.guard";
 import { LoginComponent } from "./pages/login/login.component";
 import { UserManagementComponent } from "./pages/user-manegement/user-manegement.component";
+import { DocumentVerificationComponent } from "./pages/document-verification/document-verification.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
