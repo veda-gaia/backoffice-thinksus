@@ -1,3 +1,95 @@
-<div>
-  <div>Teste Verificação de Documentos 123</div>
+<div class="card-score">
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Verificação de Documentos</h2>
+      <p>Edite e veja o status das documentações</p>
+    </div>
+  </div>
+  <div class="tabela-container">
+    <table mat-table matSort [dataSource]="dataSource" class="full-width-table">
+      <ng-container matColumnDef="useractive">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-useractive"
+        ></th>
+        <td mat-cell *matCellDef="let form"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="company">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-company"
+        >
+          Empresa
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ getSegmentName(form) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="verified-document">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Documentos verificados
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.section.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="questions">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Documentos pendentes
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ form.questions?.length || 0 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="documents">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="pendent-documents"
+        >
+          Status
+        </th>
+        <td mat-cell *matCellDef="let form">
+          {{ countQuestionsWithDocumentNeeded(form) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef class="col-actions">Ações</th>
+        <td mat-cell *matCellDef="let form">
+          <button mat-icon-button [routerLink]="['/forms/forms-new', form._id]">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
 </div>
