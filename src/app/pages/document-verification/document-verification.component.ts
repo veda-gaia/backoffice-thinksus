@@ -15,7 +15,6 @@ import { FormInterface } from "src/app/interfaces/forms/form.interface";
   styleUrls: ["./document-verification.component.scss"],
 })
 export class DocumentVerificationComponent {
-}
   filteredList: any[] = [];
   loading = true;
   displayedColumns: string[] = [
@@ -25,25 +24,25 @@ export class DocumentVerificationComponent {
     "status",
     "action",
   ];
- dataSource = new MatTableDataSource<FormInterface>([]);
+  dataSource = new MatTableDataSource<FormInterface>([]);
 
-   @ViewChild(MatPaginator) paginator!: MatPaginator;
-   @ViewChild(MatSort) sort!: MatSort;
- 
-   constructor(
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(
     //  private _esgFormService: EsgFormService,
-     private spinnerService: NgxSpinnerService
-   ) {}
- 
-   ngAfterViewInit() {
-     this.dataSource.paginator = this.paginator;
-     this.dataSource.sort = this.sort;
-   }
- 
+    private spinnerService: NgxSpinnerService,
+  ) {}
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   //  ngOnInit(): void {
   //    this.updateEsgforms();
   //  }
- 
+
   //  updateEsgforms(): void {
   //    this.spinnerService.show();
   //    this._esgFormService
@@ -60,4 +59,4 @@ export class DocumentVerificationComponent {
   //        },
   //      });
   //  }
-  
+}
