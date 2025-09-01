@@ -40,7 +40,7 @@ import { NgxDocViewerModule } from "ngx-doc-viewer";
 import { EsgFormsComponent } from "./pages/esg-forms/esg-forms.component";
 import { EsgFormsEditComponent } from "./pages/esg-forms/esg-forms-edit/esg-forms-edit.component";
 import { DocumentVerificationComponent } from "./pages/document-verification/document-verification.component";
-import { DocumentVerificationDetailComponent } from './pages/document-verification-detail/document-verification-detail.component';
+import { DocumentVerificationDetailComponent } from './pages/document-verification/document-verification-detail/document-verification-detail.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
