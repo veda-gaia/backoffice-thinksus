@@ -1,0 +1,94 @@
+.card-score {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e1e6dd;
+  border-radius: 8px;
+  max-width: 1178px;
+  margin: 32px auto;
+
+  .card-score-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dadada;
+    padding-bottom: 16px;
+
+    .form-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      h2 {
+        font-family: "Inter", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #222021;
+        margin: 0;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.64);
+        margin: 0;
+      }
+    }
+  }
+
+  .tabela-container {
+    background: #fafaf8;
+    border: 1px solid #e1e6dd;
+    border-radius: 12px;
+    padding: 12px;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        font-size: 12px;
+        font-weight: 700;
+        color: #222021;
+        padding: 14px 24px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: none;
+      }
+
+      td {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.64);
+        padding: 14px 24px;
+        border-bottom: none;
+      }
+    }
+
+    mat-paginator {
+      margin-top: 16px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+
+  .col-question {
+    width: 30%;
+  }
+  .col-answer {
+    width: 30%;
+  }
+  .col-document {
+    width: 20%;
+  }
+  .col-status {
+    width: 20%;
+  }
+}
