@@ -65,10 +65,11 @@
 
 .btn-new-question {
   background-color: white;
+  color:#1c4532;
   font-weight: 600;
   font-size: 16px;
   height: 40px;
-  border-radius: 6px;
+  border: #1c4532 solid 2px;
 }
 
 /* Quando o item está selecionado */
@@ -98,6 +99,7 @@
 
 .btn-voltar {
   background-color: white !important;
+  color:#1c4532;
   font-weight: 600;
   display: flex;
   border: none;
