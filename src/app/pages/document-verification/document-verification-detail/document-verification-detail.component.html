@@ -5,41 +5,52 @@
       <p>Informações da empresa e pontuação</p>
     </div>
   </div>
+
   <div class="tabela-container">
     <table mat-table [dataSource]="dataSource" class="full-width-table">
+
+      <!-- Questão -->
       <ng-container matColumnDef="question">
         <th mat-header-cell *matHeaderCellDef class="col-question">Questão</th>
         <td mat-cell *matCellDef="let row">{{ row.question }}</td>
       </ng-container>
 
+      <!-- Resposta -->
       <ng-container matColumnDef="answer">
         <th mat-header-cell *matHeaderCellDef class="col-answer">Resposta</th>
         <td mat-cell *matCellDef="let row">{{ row.answer }}</td>
       </ng-container>
 
+      <!-- Documento -->
       <ng-container matColumnDef="document">
-        <th mat-header-cell *matHeaderCellDef class="col-document">
-          Documento
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <a [href]="row.document" target="_blank">PDF</a>
-        </td>
+        <th mat-header-cell *matHeaderCellDef class="col-document">Documento</th>
+        <td mat-cell *matCellDef="let row">{{ row.document }}</td>
       </ng-container>
 
+      <!-- Status -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef class="col-status">Status</th>
-        <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+        <td mat-cell *matCellDef="let row">
+          {{ row.status }}
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Quando não há dados -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          Sem dados para exibir.
+        </td>
+      </tr>
     </table>
-    <mat-paginator [pageSize]="10" showFirstLastButtons></mat-paginator>
+
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
   </div>
+
   <div class="actions">
     <button mat-button routerLink="/document-verification">Voltar</button>
-    <button mat-raised-button color="primary" (click)="sendReview()">
-      Enviar revisão
-    </button>
+    <button class="btn-novo-usuario" (click)="sendReview()">Enviar revisão</button>
   </div>
 </div>
