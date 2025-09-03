@@ -1,0 +1,117 @@
+<div class="card-score">
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Detalhes da verificação</h2>
+      <p>Informações da empresa e pontuação</p>
+    </div>
+
+    <button class="btn-voltar" routerLink="/forms">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
+
+  <div class="fade-in row">
+    <div class="col">
+      <div
+        class="card-logged p-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-4 w-100"
+      >
+        <div class="flex-grow-1">
+          <p class="secondary-text f-size-1rem fw-500 pb-3">
+            {{ "IMPROVEMENTS_HUD.COMPANY" | translate }}:
+            <span class="fw-700 gray-text">Empresa Matriz</span>
+          </p>
+
+          <p class="secondary-text f-size-1rem fw-500">
+            {{ "IMPROVEMENTS_HUD.SECTION" | translate }}:
+            <span class="fw-700 gray-text">Industria</span>
+          </p>
+        </div>
+
+        <div class="flex-grow-1">
+          <p class="secondary-text f-size-1rem fw-500 pb-3">
+            {{ "IMPROVEMENTS_HUD.CNPJ" | translate }}:
+            <span class="fw-700 gray-text">00.000.000/0000-00</span>
+          </p>
+
+          <p class="secondary-text f-size-1rem fw-500">
+            {{ "IMPROVEMENTS_HUD.SEGMENT" | translate }}:
+            <span class="fw-700 gray-text"> Textil ou peles </span>
+          </p>
+        </div>
+
+        <div class="flex-grow-1">
+          <p
+            class="secondary-text text-end f-size-0-85rem l-height-1-25 fw-500"
+          >
+            {{ "IMPROVEMENTS_HUD.SCORE" | translate }}
+          </p>
+
+          <p class="system-success-text text-end f-size-3rem l-height-3 fw-700">
+            92
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabela-container">
+    <table mat-table [dataSource]="dataSource" class="full-width-table">
+      <!-- Questão -->
+      <ng-container matColumnDef="question">
+        <th mat-header-cell *matHeaderCellDef class="col-question">Questão</th>
+        <td mat-cell *matCellDef="let row">{{ row.question }}</td>
+      </ng-container>
+
+      <!-- Resposta -->
+      <ng-container matColumnDef="answer">
+        <th mat-header-cell *matHeaderCellDef class="col-answer">Resposta</th>
+        <td mat-cell *matCellDef="let row">{{ row.answer }}</td>
+      </ng-container>
+
+      <!-- Documento -->
+      <ng-container matColumnDef="document">
+        <th mat-header-cell *matHeaderCellDef class="col-document">
+          Documento
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.document }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="col-status">Status</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="select-container">
+            <select formControlName="sectionId">
+              <option [ngValue]="null" disabled>Selecione</option>
+              <option>Em andamento</option>
+              <option>Concluído</option>
+            </select>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Quando não há dados -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          Sem dados para exibir.
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+
+  <div class="actions">
+    <button class="btn-novo-usuario" (click)="sendReview()">
+      Enviar revisão
+    </button>
+  </div>
+</div>

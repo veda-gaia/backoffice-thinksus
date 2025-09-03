@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #e1e6dd;
   border-radius: 8px;
   max-width: 1178px;
@@ -23,10 +23,10 @@
       gap: 4px;
 
       h2 {
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         font-size: 24px;
         font-weight: 700;
-        color: #1C4532;
+        color: #222021;
         margin: 0;
       }
 
@@ -36,15 +36,6 @@
         color: rgba(0, 0, 0, 0.64);
         margin: 0;
       }
-    }
-
-    .btn-novo-usuario {
-      background-color: #1c4532;
-      color: white;
-      font-weight: 600;
-      font-size: 16px;
-      height: 40px;
-      border-radius: 6px;
     }
   }
 
@@ -61,7 +52,7 @@
       th {
         font-size: 12px;
         font-weight: 700;
-        color: #1C4532;
+        color: #222021;
         padding: 14px 24px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -90,41 +81,23 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    tr {
-      display: table-row;
-    }
-
-    td {
-      display: table-cell;
-      vertical-align: middle;
-    }
   }
 
-  .col-segments {
-    width: 250px;
-  }
-
-  .col-username {
-    width: 150px;
+  .col-company {
+    width: 300px;
   }
 
   .col-number-itens {
-    width: 150px;
+    width: 200px;
   }
 
   .col-actions {
     width: 100px;
   }
 
+  .col-status {
+    width: 100px;
+  }
   .mat-cell,
   .mat-header-cell {
     border: none;
