@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BaseService } from './base.service';
-import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map } from 'rxjs';
-import CompanyInterface from '../interfaces/company/company.interface';
-import { updateStatusDto } from '../dtos/update-status.dto';
+import { Injectable } from "@angular/core";
+import { BaseService } from "./base.service";
+import { environment } from "src/environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { Observable, catchError, map } from "rxjs";
+import CompanyInterface from "../interfaces/company/company.interface";
+import { updateStatusDto } from "../dtos/update-status.dto";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class EsgRatingService extends BaseService {
   private readonly url: string = `${environment.api.path}/esg-rating`;
@@ -55,6 +55,12 @@ export class EsgRatingService extends BaseService {
   donwloadReport() {
     return this.httpClient
       .get(`${this.url}/download-report`, this.authorizedHeader())
+      .pipe(map(this.extractData), catchError(this.serviceError));
+  }
+
+  sendReview(formId: string, dto: any) {
+    return this.httpClient
+      .put(`${this.url}/review/${formId}`, dto, this.authorizedHeader())
       .pipe(map(this.extractData), catchError(this.serviceError));
   }
 }
