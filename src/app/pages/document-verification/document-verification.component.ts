@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize } from 'rxjs';
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
+import { NgxSpinnerService } from "ngx-spinner";
+import { finalize } from "rxjs";
 import { FormInterface } from "src/app/interfaces/forms/form.interface";
+import { EsgRatingService } from "src/app/services/esg-rating.service";
 
 interface DocumentRow {
   company: string;
@@ -14,17 +15,17 @@ interface DocumentRow {
 }
 
 @Component({
-  selector: 'app-document-verification',
-  templateUrl: './document-verification.component.html',
-  styleUrls: ['./document-verification.component.scss'],
+  selector: "app-document-verification",
+  templateUrl: "./document-verification.component.html",
+  styleUrls: ["./document-verification.component.scss"],
 })
 export class DocumentVerificationComponent implements OnInit, AfterViewInit {
   displayedColumns = [
-    'company',
-    'verifiedDocument',
-    'pendingDocument',
-    'status',
-    'action',
+    "company",
+    "verifiedDocument",
+    "pendingDocument",
+    "status",
+    "action",
   ];
   dataSource = new MatTableDataSource<DocumentRow>([]);
 
@@ -32,12 +33,12 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    // private service: DocumentVerificationService,
+    private service: EsgRatingService,
     private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
-     this.loadMockData();
+    this.loadData();
   }
 
   ngAfterViewInit(): void {
@@ -45,11 +46,46 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  private loadMockData(): void {
-     const mock: DocumentRow[] = [
-       { company: 'Empresa A', verifiedDocument: 3, pendingDocument: 1, status: 'Em andamento' },
-       { company: 'Empresa B', verifiedDocument: 5, pendingDocument: 0, status: 'Concluído' },
-     ];
-     this.dataSource.data = mock;
-   }
+  private loadData(): void {
+    this.spinner.show();
+    this.service
+      .list()
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          var lstForms = data.map((item) => {
+            const verified = item.answers.filter(
+              (ans: any) =>
+                ans.documentsPath &&
+                ans.documentsPath.length > 0 &&
+                ans.status === "APPROVED"
+            ).length;
+
+            const pending = item.answers.filter(
+              (ans: any) =>
+                ans.documentsPath &&
+                ans.documentsPath.length > 0 &&
+                ans.status !== "APPROVED"
+            ).length;
+
+            return {
+              company: item.company.company,
+              verifiedDocument: verified,
+              pendingDocument: pending,
+              status: item.status,
+              id: item._id,
+            };
+          });
+
+          this.dataSource.data = lstForms;
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+  }
 }

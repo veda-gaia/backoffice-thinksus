@@ -1,9 +1,12 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { QuestionRow } from "src/app/interfaces/document-verification/question-row.interface";
 import { DocumentVerificationService } from "src/app/services/document-verification.service";
+import { EsgRatingService } from "src/app/services/esg-rating.service";
+import { finalize } from "rxjs";
+import { NgxSpinnerService } from "ngx-spinner";
 
 interface DocumentRow {
   question: string;
@@ -22,23 +25,50 @@ export class DocumentVerificationDetailComponent
   displayedColumns: string[] = ["question", "answer", "document", "status"];
   dataSource = new MatTableDataSource<QuestionRow>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  company: any;
+  score: number = 0;
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly service: DocumentVerificationService
+    private readonly service: EsgRatingService,
+    private readonly router: Router,
+    private spinner: NgxSpinnerService
   ) {}
 
-  // ngOnInit(): void {
-  //   const id = this.route.snapshot.paramMap.get("id");
-  //   if (id) {
-  //     this.service.get(id).subscribe((rows) => {
-  //       this.dataSource.data = rows;
-  //     });
-  //   }
-  // }
-
   ngOnInit(): void {
-    this.loadMockData();
+    const id = this.route.snapshot.paramMap.get("id");
+    if (id) {
+      this.spinner.show();
+      this.service
+        .getById(id)
+        .pipe(
+          finalize(() => {
+            this.spinner.hide();
+          })
+        )
+        .subscribe((res: any) => {
+          this.dataSource.data = res.answers.map((a: any) => ({
+            question: a.questionNumber,
+            answer:
+              a.answer === "Yes" ? "Sim" : a.answer === "No" ? "Não" : a.answer,
+            document:
+              a.documentsPath && a.documentsPath.length > 0
+                ? a.documentsPath
+                : [],
+            status:
+              a.documentsPath && a.documentsPath.length > 0
+                ? a.status || "PENDING"
+                : "APPROVED",
+          }));
+
+          this.company = res.company;
+          this.score = res.esgScore;
+        });
+    }
+  }
+
+  isAllApproved(): boolean {
+    return this.dataSource.data.every((row: any) => row.status !== "PENDING");
   }
 
   ngAfterViewInit(): void {
@@ -46,26 +76,31 @@ export class DocumentVerificationDetailComponent
   }
 
   sendReview(): void {
-    // TODO: implement review submission
-  }
+    const updatedAnswers = this.dataSource.data.map((row: any) => ({
+      questionNumber: row.question,
+      status: row.status,
+    }));
 
-  private loadMockData(): void {
-    const mock: DocumentRow[] = [
-      {
-        question:
-          "Is there any carbon footprint control and mitigation actions?",
-        answer: "Sim",
-        document: "documento.pdf",
-        status: "Em andamento",
-      },
-      {
-        question:
-          "Does the energy source is provided by renewable energy sources? (solar, wind energy)",
-        answer: "Não",
-        document: "documento.pdf",
-        status: "Concluído",
-      },
-    ];
-    this.dataSource.data = mock;
+    const formId = this.route.snapshot.paramMap.get("id");
+
+    const dto = { answers: updatedAnswers };
+
+    this.spinner.show();
+
+    this.service
+      .sendReview(formId!, dto)
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(["/document-verification"]);
+        },
+        error: (err) => {
+          console.error("Erro ao enviar revisão", err);
+        },
+      });
   }
 }
