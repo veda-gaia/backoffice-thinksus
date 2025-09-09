@@ -1,47 +1,50 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 
 import {
   HTTP_INTERCEPTORS,
   HttpClient,
   HttpClientModule,
-} from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+} from "@angular/common/http";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import {
   NgxMaskDirective,
   NgxMaskPipe,
   provideEnvironmentNgxMask,
-} from 'ngx-mask';
-import { ToastrModule } from 'ngx-toastr';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { AuthInterceptor } from './services/auth-interceptor.service';
-import { AuthenticationService } from './services/authentication.service';
-import { CepService } from './services/cep.service';
-import { UserService } from './services/user.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { AwsService } from './services/aws.service';
-import { SharedModule } from './shared/shared.module';
-import { UserManagementComponent } from './pages/user-manegement/user-manegement.component';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { UserEditComponent } from './pages/user-edit/user-edit.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { LoginComponent } from './pages/login/login.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { CommonModule } from '@angular/common';
-import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import { EsgFormsComponent } from './pages/esg-forms/esg-forms.component';
-import { EsgFormsEditComponent } from './pages/esg-forms/esg-forms-edit/esg-forms-edit.component';
+} from "ngx-mask";
+import { ToastrModule } from "ngx-toastr";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { AuthInterceptor } from "./services/auth-interceptor.service";
+import { AuthenticationService } from "./services/authentication.service";
+import { CepService } from "./services/cep.service";
+import { UserService } from "./services/user.service";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgxSpinnerModule } from "ngx-spinner";
+import { AwsService } from "./services/aws.service";
+import { SharedModule } from "./shared/shared.module";
+import { UserManagementComponent } from "./pages/user-manegement/user-manegement.component";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { UserEditComponent } from "./pages/user-edit/user-edit.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { LoginComponent } from "./pages/login/login.component";
+import { DashboardComponent } from "./pages/dashboard/dashboard.component";
+import { CommonModule } from "@angular/common";
+import { NgxDocViewerModule } from "ngx-doc-viewer";
+import { EsgFormsComponent } from "./pages/esg-forms/esg-forms.component";
+import { EsgFormsEditComponent } from "./pages/esg-forms/esg-forms-edit/esg-forms-edit.component";
+import { DocumentVerificationComponent } from "./pages/document-verification/document-verification.component";
+import { DocumentVerificationDetailComponent } from "./pages/document-verification/document-verification-detail/document-verification-detail.component";
+import { DashboardCardComponent } from "./pages/dashboard/dashboard-card/dashboard-card.component";
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
 
 @NgModule({
@@ -52,6 +55,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     DashboardComponent,
     EsgFormsComponent,
+    DocumentVerificationComponent,
+    DocumentVerificationDetailComponent,
+    DashboardCardComponent,
   ],
   imports: [
     BrowserModule,

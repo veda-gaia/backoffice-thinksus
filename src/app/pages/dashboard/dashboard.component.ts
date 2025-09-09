@@ -1,62 +1,56 @@
 import { JsonPipe } from "@angular/common";
-import { Component, ViewChild } from "@angular/core";
-import { Router } from "@angular/router";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ToastrService } from "ngx-toastr";
-import { CompanyService } from "src/app/services/company.service";
-import { ContractedPlanService } from "src/app/services/contracted-plan.service";
-import { EsgRatingService } from "src/app/services/esg-rating.service";
-import { initialScoreArray } from "src/app/util/initial-score-array.util";
-import { ScoreWarningComponent } from "../score-warning/score-warning.component";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { NgxSpinnerService } from "ngx-spinner";
 import { finalize } from "rxjs";
+import { DashboardService } from "src/app/services/dashboard.service";
 
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   @ViewChild("contentModal") contentModal: any;
+  items: { value: number | string; label: string }[] = [];
 
-  avaliationStatus = "";
-  userName = "";
-  companySection = "agro";
-  loading = true;
+  constructor(
+    private _dashboardService: DashboardService,
+    private spinner: NgxSpinnerService
+  ) {}
 
-  graphData: any = [];
-  graphConfig: any = {
-    displayModeBar: false,
-    responsive: true,
-    scrollZoom: false,
-    staticPlot: true,
-  };
+  ngOnInit(): void {
+    this.loadDashboardInformation();
+  }
 
-  environmentalQuestions = 0;
-  socialQuestions = 0;
-  governanceQuestions = 0;
+  loadDashboardInformation(): void {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(end.getMonth() - 9);
 
-  environmentalInfo = {
-    progress: 0,
-    score: 0,
-  };
-  socialInfo = {
-    progress: 0,
-    score: 0,
-  };
-  governanceInfo = {
-    progress: 0,
-    score: 0,
-  };
-  distributionESG: any = {
-    environmental: 0,
-    governance: 0,
-    social: 0,
-  };
+    this.spinner.show();
 
-  odsScoreArray: any[] = [];
-  postOdsScoreArray: any[] = [];
-  allCompleteAvaliations: any[] = [];
-  postAvaliationInfo: any;
-
-  constructor() {}
+    this._dashboardService
+      .getdashboardata(start, end)
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.items = [
+            { value: data.documentsSents, label: "Documentos enviados" },
+            { value: data.formsCount, label: "Formulários" },
+            { value: data.ratingFilled, label: "Avaliações realizadas" },
+            { value: data.plansSubscribed, label: "Planos contratados" },
+            { value: data.documentsChecked, label: "Documentos verificados" },
+            { value: data.questionCount, label: "Perguntas criadas" },
+            { value: data.ratingCompleted, label: "Avaliações concluídas" },
+          ];
+        },
+        error: (err) => {
+          console.error("Erro ao carregar dashboard", err);
+        },
+      });
+  }
 }

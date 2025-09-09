@@ -1,3 +1,17 @@
-<div>
-  <div>Teste Dashboard 123</div>
+<div class="card-score">
+  <div class="card-score-info">
+    <div class="form-header">
+      <h2>Dashboard</h2>
+      <p>Confira os ultimos indicadores</p>
+    </div>
+  </div>
+
+  <div class="dashboard-container">
+    <app-dashboard-card
+      *ngFor="let item of items"
+      [value]="item.value"
+      [label]="item.label"
+    >
+    </app-dashboard-card>
+  </div>
 </div>
