@@ -5,7 +5,7 @@
       <p>Informações da empresa e pontuação</p>
     </div>
 
-    <button class="btn-voltar" routerLink="/forms">
+    <button class="btn-voltar" routerLink="/document-verification">
       <mat-icon>arrow_back</mat-icon>
       Voltar
     </button>
@@ -19,24 +19,24 @@
         <div class="flex-grow-1">
           <p class="secondary-text f-size-1rem fw-500 pb-3">
             {{ "IMPROVEMENTS_HUD.COMPANY" | translate }}:
-            <span class="fw-700 gray-text">Empresa Matriz</span>
+            <span class="fw-700 gray-text">{{ company?.company }}</span>
           </p>
 
           <p class="secondary-text f-size-1rem fw-500">
             {{ "IMPROVEMENTS_HUD.SECTION" | translate }}:
-            <span class="fw-700 gray-text">Industria</span>
+            <span class="fw-700 gray-text">{{ company?.section }}</span>
           </p>
         </div>
 
         <div class="flex-grow-1">
           <p class="secondary-text f-size-1rem fw-500 pb-3">
             {{ "IMPROVEMENTS_HUD.CNPJ" | translate }}:
-            <span class="fw-700 gray-text">00.000.000/0000-00</span>
+            <span class="fw-700 gray-text">{{ company?.cnpj }}</span>
           </p>
 
           <p class="secondary-text f-size-1rem fw-500">
             {{ "IMPROVEMENTS_HUD.SEGMENT" | translate }}:
-            <span class="fw-700 gray-text"> Textil ou peles </span>
+            <span class="fw-700 gray-text"> {{ company?.segment }} </span>
           </p>
         </div>
 
@@ -48,7 +48,7 @@
           </p>
 
           <p class="system-success-text text-end f-size-3rem l-height-3 fw-700">
-            92
+            {{ score }}
           </p>
         </div>
       </div>
@@ -57,37 +57,57 @@
 
   <div class="tabela-container">
     <table mat-table [dataSource]="dataSource" class="full-width-table">
-      <!-- Questão -->
       <ng-container matColumnDef="question">
         <th mat-header-cell *matHeaderCellDef class="col-question">Questão</th>
         <td mat-cell *matCellDef="let row">{{ row.question }}</td>
       </ng-container>
 
-      <!-- Resposta -->
       <ng-container matColumnDef="answer">
         <th mat-header-cell *matHeaderCellDef class="col-answer">Resposta</th>
         <td mat-cell *matCellDef="let row">{{ row.answer }}</td>
       </ng-container>
 
-      <!-- Documento -->
       <ng-container matColumnDef="document">
         <th mat-header-cell *matHeaderCellDef class="col-document">
           Documento
         </th>
-        <td mat-cell *matCellDef="let row">{{ row.document }}</td>
+        <td mat-cell *matCellDef="let row">
+          <ng-container *ngIf="row.document?.length; else noDocs">
+            <div *ngFor="let doc of row.document">
+              <a [href]="doc" target="_blank" rel="noopener noreferrer">
+                {{ doc.split("/").pop() }}
+              </a>
+            </div>
+          </ng-container>
+          <ng-template #noDocs>—</ng-template>
+        </td>
       </ng-container>
 
       <!-- Status -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef class="col-status">Status</th>
         <td mat-cell *matCellDef="let row">
-          <div class="select-container">
-            <select formControlName="sectionId">
+          <!-- Se tem documento: select editável -->
+          <div
+            class="select-container"
+            *ngIf="row.document?.length > 0; else fixedSelect"
+          >
+            <select [(ngModel)]="row.status">
               <option [ngValue]="null" disabled>Selecione</option>
-              <option>Em andamento</option>
-              <option>Concluído</option>
+              <option value="APPROVED">Aprovado</option>
+              <option value="PENDING">Pendente</option>
+              <option value="REJECTED">Reprovado</option>
             </select>
           </div>
+
+          <!-- Se não tem documento: select fixo com Approved -->
+          <ng-template #fixedSelect>
+            <div class="select-container">
+              <select disabled>
+                <option value="APPROVED" selected>Aprovado</option>
+              </select>
+            </div>
+          </ng-template>
         </td>
       </ng-container>
 
