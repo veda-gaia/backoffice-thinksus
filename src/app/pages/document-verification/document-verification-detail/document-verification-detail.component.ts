@@ -47,19 +47,25 @@ export class DocumentVerificationDetailComponent
           })
         )
         .subscribe((res: any) => {
-          this.dataSource.data = res.answers.map((a: any) => ({
-            question: a.questionNumber,
-            answer:
-              a.answer === "Yes" ? "Sim" : a.answer === "No" ? "Não" : a.answer,
-            document:
-              a.documentsPath && a.documentsPath.length > 0
-                ? a.documentsPath
-                : [],
-            status:
-              a.documentsPath && a.documentsPath.length > 0
-                ? a.status || "PENDING"
-                : "APPROVED",
-          }));
+          this.dataSource.data = res.answers
+            .filter((a: any) => a.documentsPath && a.documentsPath.length > 0)
+            .map((a: any) => ({
+              question: a.questionNumber,
+              answer:
+                a.answer === "Yes"
+                  ? "Sim"
+                  : a.answer === "No"
+                    ? "Não"
+                    : a.answer,
+              document:
+                a.documentsPath && a.documentsPath.length > 0
+                  ? a.documentsPath
+                  : [],
+              status:
+                a.documentsPath && a.documentsPath.length > 0
+                  ? a.status || "PENDING"
+                  : "APPROVED",
+            }));
 
           this.company = res.company;
           this.score = res.esgScore;
