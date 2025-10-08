@@ -99,8 +99,7 @@ export class UserEditComponent implements OnInit {
 
     this.userService.registerUserBackoffice(dto).subscribe({
       next: () => this.activeModal.close('updated'),
-      error: (err) => {
-        console.error('Erro ao registrar usuário:', err);
+      error: (err) => {        
         alert('Erro ao salvar usuário. Verifique os dados e tente novamente.');
       },
     });

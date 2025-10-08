@@ -32,6 +32,14 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  statusMap: { [key: string]: string } = {
+    DRAFT: "Rascunho",
+    IN_PROGRESS: "Em progresso",
+    COMPLETED: "Completo",
+    UNDER_ANALYSIS: "Em análise",
+    DOCUMENTS_PENDING: "Documentos pendentes",
+  };
+
   constructor(
     private service: EsgRatingService,
     private spinner: NgxSpinnerService
@@ -46,6 +54,10 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  getStatusLabel(status: string): string {
+    return this.statusMap[status] || status;
+  }
+
   private loadData(): void {
     this.spinner.show();
     this.service
@@ -57,29 +69,36 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
       )
       .subscribe({
         next: (data) => {
-          var lstForms = data.map((item) => {
-            const verified = item.answers.filter(
-              (ans: any) =>
-                ans.documentsPath &&
-                ans.documentsPath.length > 0 &&
-                ans.status === "APPROVED"
-            ).length;
+          var lstForms = data
+            .filter(
+              (a: any) =>
+                a.status == "UNDER_ANALYSIS" ||
+                a.status == "COMPLETED" ||
+                a.status == "DOCUMENTS_PENDING"
+            )
+            .map((item) => {
+              const verified = item.answers.filter(
+                (ans: any) =>
+                  ans.documentsPath &&
+                  ans.documentsPath.length > 0 &&
+                  ans.status === "APPROVED"
+              ).length;
 
-            const pending = item.answers.filter(
-              (ans: any) =>
-                ans.documentsPath &&
-                ans.documentsPath.length > 0 &&
-                ans.status !== "APPROVED"
-            ).length;
+              const pending = item.answers.filter(
+                (ans: any) =>
+                  ans.documentsPath &&
+                  ans.documentsPath.length > 0 &&
+                  ans.status !== "APPROVED"
+              ).length;
 
-            return {
-              company: item.company.company,
-              verifiedDocument: verified,
-              pendingDocument: pending,
-              status: item.status,
-              id: item._id,
-            };
-          });
+              return {
+                company: item.company.company,
+                verifiedDocument: verified,
+                pendingDocument: pending,
+                status: item.status,
+                id: item._id,
+              };
+            });
 
           this.dataSource.data = lstForms;
         },

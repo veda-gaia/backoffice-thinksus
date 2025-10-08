@@ -130,7 +130,11 @@
   </div>
 
   <div class="actions">
-    <button class="btn-novo-usuario" (click)="sendReview()">
+    <button
+      class="btn-novo-usuario"
+      (click)="sendReview()"
+      [disabled]="!isAllApproved()"
+    >
       Enviar revisão
     </button>
   </div>
