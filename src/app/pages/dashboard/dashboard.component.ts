@@ -1,4 +1,3 @@
-import { JsonPipe } from "@angular/common";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { NgxSpinnerService } from "ngx-spinner";
 import { finalize } from "rxjs";
@@ -13,6 +12,15 @@ export class DashboardComponent implements OnInit {
   @ViewChild("contentModal") contentModal: any;
   items: { value: number | string; label: string }[] = [];
 
+  selectedPeriod: number = 30;
+
+  periods = [
+    { value: 30, label: "Últimos 30 dias" },
+    { value: 60, label: "Últimos 60 dias" },
+    { value: 90, label: "Últimos 90 dias" },
+    { value: 120, label: "Últimos 120 dias" },
+  ];
+
   constructor(
     private _dashboardService: DashboardService,
     private spinner: NgxSpinnerService
@@ -25,17 +33,13 @@ export class DashboardComponent implements OnInit {
   loadDashboardInformation(): void {
     const end = new Date();
     const start = new Date();
-    start.setMonth(end.getMonth() - 9);
+    start.setDate(end.getDate() - this.selectedPeriod);
 
     this.spinner.show();
 
     this._dashboardService
       .getdashboardata(start, end)
-      .pipe(
-        finalize(() => {
-          this.spinner.hide();
-        })
-      )
+      .pipe(finalize(() => this.spinner.hide()))
       .subscribe({
         next: (data) => {
           this.items = [
@@ -52,5 +56,9 @@ export class DashboardComponent implements OnInit {
           console.error("Erro ao carregar dashboard", err);
         },
       });
+  }
+
+  onPeriodChange(): void {
+    this.loadDashboardInformation();
   }
 }

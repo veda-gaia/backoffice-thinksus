@@ -2,7 +2,20 @@
   <div class="card-score-info">
     <div class="form-header">
       <h2>Dashboard</h2>
-      <p>Confira os ultimos indicadores</p>
+      <p>Confira os últimos indicadores</p>
+    </div>
+
+    <div class="period-filter">
+      <label for="period">Período:</label>
+      <select
+        id="period"
+        [(ngModel)]="selectedPeriod"
+        (change)="onPeriodChange()"
+      >
+        <option *ngFor="let p of periods" [value]="p.value">
+          {{ p.label }}
+        </option>
+      </select>
     </div>
   </div>
 
