@@ -71,7 +71,7 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
     });
 
     const id = this.route.snapshot.paramMap.get("id");
-    if (id != "") this.setFormIdSession(id ?? "");
+    if (id != "" && id != null) this.setFormIdSession(id ?? "");
 
     this.loadSection();
 
@@ -83,7 +83,7 @@ export class EsgFormsEditComponent implements AfterViewInit, OnInit, OnDestroy {
     });
 
     const formSessionId = this.getFormIdSession();
-    if (formSessionId != "") {
+    if (formSessionId != "" && formSessionId != "0") {
       this.spinnerService.show();
       this._esgFormService
         .getbyID(formSessionId)
