@@ -50,7 +50,8 @@ export class DocumentVerificationDetailComponent
           this.dataSource.data = res.answers
             .filter((a: any) => a.documentsPath && a.documentsPath.length > 0)
             .map((a: any) => ({
-              question: a.questionNumber,
+              questionId: a.questionId._id,
+              question: a.questionId.name,
               answer:
                 a.answer === "Yes"
                   ? "Sim"
@@ -83,7 +84,7 @@ export class DocumentVerificationDetailComponent
 
   sendReview(): void {
     const updatedAnswers = this.dataSource.data.map((row: any) => ({
-      questionNumber: row.question,
+      questionId: row.questionId,
       status: row.status,
     }));
 
