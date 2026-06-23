@@ -31,6 +31,13 @@ const routes: Routes = [
             (m) => m.EsgFormsModule,
           ),
       },
+      {
+        path: "governance",
+        loadChildren: () =>
+          import("./pages/governance/governance.module").then(
+            (m) => m.GovernanceModule,
+          ),
+      },
       { path: "", redirectTo: "/login", pathMatch: "full" },
     ],
   },
