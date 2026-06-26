@@ -205,6 +205,13 @@
     "DOCUMENTS": "Verificação de Documentos",
     "FORMULARIOS": "Controle de Formulários",
     "USUARIOS": "Controle de Usuários",
+    "ESG": "Thinksus ESG",
+    "SUGGESTIONS_IA": "Gestão de Sugestões IA",
+    "COMING_SOON": "Em breve",
+    "GOVERNANCE": "Governança",
+    "GOV_SUPPORT": "Suporte",
+    "GOV_ROADMAP": "Roadmap",
+    "GOV_DOCS": "Documentos",
     "PASSWORD": "Alterar Senha",
     "LOGOUT": "Sair"
   },

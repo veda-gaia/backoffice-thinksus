@@ -8,4 +8,5 @@ import { environment } from "src/environments/environment";
 export class SupportBoardComponent {
   projectId = environment.snaps.projectId;
   apiKey = environment.snaps.apiKey;
+  apiUrl = environment.snaps.apiUrl;
 }

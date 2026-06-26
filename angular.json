@@ -33,7 +33,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets",
+                "ignore": ["**/.DS_Store", ".DS_Store", ".gitkeep"]
+              }
             ],
             "styles": [
               "src/styles.scss",

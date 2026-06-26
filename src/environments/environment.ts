@@ -18,5 +18,6 @@ export const environment = {
   snaps: {
     projectId: "7cfbf7a5-deb8-4e22-996a-0d6c923ff83e",
     apiKey: "aUgkfI-ERUcXtrXH_qcNS5MxRb0bZzeIQb4O0np7pNg",
+    apiUrl: "https://snaps-api-xt4ori2rfq-uc.a.run.app",
   },
 };
