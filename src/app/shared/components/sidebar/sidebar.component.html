@@ -58,10 +58,13 @@
               </button>
             </li>
             <li>
-              <button class="nav-link-btn nav-link-sub nav-link-disabled" disabled>
+              <button
+                class="nav-link-btn nav-link-sub"
+                [class.active]="isActive('/ai-examples')"
+                (click)="navigateTo('/ai-examples')"
+              >
                 <img src="/assets/icon/init.svg" alt="" />
                 {{ "SIDEBAR.SUGGESTIONS_IA" | translate }}
-                <span class="badge-soon">{{ "SIDEBAR.COMING_SOON" | translate }}</span>
               </button>
             </li>
           </ul>

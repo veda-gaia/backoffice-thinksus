@@ -1,0 +1,50 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    {{ exampleId ? "Editar exemplo" : "Novo exemplo" }} few-shot
+  </h4>
+  <button type="button" class="btn-close" (click)="closeModal()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label">Pilar</label>
+      <select class="form-select" formControlName="pilar">
+        <option [ngValue]="null" disabled>Selecione</option>
+        <option *ngFor="let pilar of pilares" [value]="pilar">{{ pilar }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Setor (opcional, deixe em branco para exemplo genérico)</label>
+      <select class="form-select" formControlName="setor">
+        <option [ngValue]="null">Genérico (todos os setores)</option>
+        <option *ngFor="let setor of setores" [value]="setor">{{ setor }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Pontuação de referência</label>
+      <input type="number" class="form-control" formControlName="score" min="0" max="100" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Contexto de entrada</label>
+      <textarea class="form-control" rows="3" formControlName="inputContext"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Sugestão exemplar (saída esperada)</label>
+      <textarea class="form-control" rows="3" formControlName="expectedOutput"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeModal()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>
