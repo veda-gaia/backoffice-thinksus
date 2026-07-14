@@ -42,7 +42,7 @@
       <button type="button" class="btn btn-secondary" (click)="closeModal()">
         Cancelar
       </button>
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
         Salvar
       </button>
     </div>

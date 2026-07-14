@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map } from 'rxjs';
 import { BaseService } from './base.service';
 import { environment } from 'src/environments/environment';
@@ -21,14 +21,12 @@ export class AiExampleService extends BaseService {
     pilar?: PilarEnum;
     setor?: CompanySectionEnum;
   }): Observable<AiExampleInterface[]> {
-    let query = '';
-    if (filters?.pilar) query += `?pilar=${filters.pilar}`;
-    if (filters?.setor) {
-      query += query ? `&setor=${filters.setor}` : `?setor=${filters.setor}`;
-    }
+    let params = new HttpParams();
+    if (filters?.pilar) params = params.set('pilar', filters.pilar);
+    if (filters?.setor) params = params.set('setor', filters.setor);
 
     return this.httpClient
-      .get(`${this.url}${query}`, this.authorizedHeader())
+      .get(`${this.url}`, { ...this.authorizedHeader(), params })
       .pipe(map(this.extractData), catchError(this.serviceError));
   }
 

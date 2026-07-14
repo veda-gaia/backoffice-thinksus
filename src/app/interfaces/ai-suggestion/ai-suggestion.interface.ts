@@ -1,4 +1,5 @@
 import { AiSuggestionStatusEnum } from 'src/app/enums/ai-suggestion-status.enum';
+import { PilarEnum } from 'src/app/enums/pilar.enum';
 
 export interface AiSuggestionTextInterface {
   pt: string;
@@ -8,7 +9,7 @@ export interface AiSuggestionTextInterface {
 
 export interface AiSuggestionItemInterface {
   _id: string;
-  area: 'E' | 'S' | 'G';
+  area: PilarEnum;
   questionId: string;
   text: AiSuggestionTextInterface;
   status: AiSuggestionStatusEnum;
