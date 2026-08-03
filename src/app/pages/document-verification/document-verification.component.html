@@ -20,6 +20,42 @@
         <td mat-cell *matCellDef="let row">{{ row.company }}</td>
       </ng-container>
 
+      <ng-container matColumnDef="section">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-company"
+        >
+          Setor
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.section }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="segment">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-company"
+        >
+          Segmento
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.segment }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="esgScore">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="col-number-itens"
+        >
+          Nota
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.esgScore | number : "1.0-1" }}</td>
+      </ng-container>
+
       <ng-container matColumnDef="verifiedDocument">
         <th
           mat-header-cell
