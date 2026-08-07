@@ -24,7 +24,7 @@
 
           <p class="secondary-text f-size-1rem fw-500">
             {{ "IMPROVEMENTS_HUD.SECTION" | translate }}:
-            <span class="fw-700 gray-text">{{ company?.section }}</span>
+            <span class="fw-700 gray-text">{{ company?.section?.name || '-' }}</span>
           </p>
         </div>
 
@@ -36,7 +36,7 @@
 
           <p class="secondary-text f-size-1rem fw-500">
             {{ "IMPROVEMENTS_HUD.SEGMENT" | translate }}:
-            <span class="fw-700 gray-text"> {{ company?.segment }} </span>
+            <span class="fw-700 gray-text"> {{ company?.segment?.name || '-' }} </span>
           </p>
         </div>
 

@@ -68,7 +68,22 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
   // Setor/segmento vêm populados pela API como { _id, name }. Quando o populate
   // não acontece o valor chega como ObjectId cru, que não deve ir pra tela.
   private getRefName(ref: any): string {
-    return ref && typeof ref === "object" && ref.name ? ref.name : "-";
+    if (!ref) return "-";
+
+    // Referência populada (formato atual): { _id, name }
+    if (typeof ref === "object") return ref.name || "-";
+
+    // A base carrega três formatos para section/segment, resultado de uma
+    // migração de enum para coleção de referência que nunca foi concluída:
+    // documento populado, ObjectId (cru ou em string) e o código de enum
+    // antigo ("Industry", "sugar_cane"). Só o último é legível por si — os
+    // ObjectId viram "-" porque a tela não tem como resolvê-los sem o populate,
+    // hoje impossível de ligar porque quebraria a listagem inteira.
+    if (typeof ref === "string") {
+      return /^[0-9a-fA-F]{24}$/.test(ref) ? "-" : ref;
+    }
+
+    return "-";
   }
 
   private loadData(): void {
