@@ -59,23 +59,23 @@ export class AssesmentComponent {
       })
     ).subscribe({
       next: (data) => {
-        if(data.section === 'Agribusiness') {
+        // ADR-0033: `section` e referencia hidratada. Estes branches definem a
+        // CONTAGEM DE QUESTOES por pilar e nao existe endpoint que forneca esse
+        // numero por setor — removê-los sem fonte de dado quebraria a tela.
+        // Ficam operando sobre o nome resolvido, mas seguem sendo taxonomia
+        // estatica e precisam de uma fonte antes de sair.
+        const sectionName =
+          typeof data.section === 'object'
+            ? (data.section as any)?.name
+            : data.section;
+
+        if(sectionName === 'Agribusiness') {
           this.environmentalQuestions = 13
           this.socialQuestions = 15
           this.governanceQuestions = 14
 
           this.companySection = 'agro'
         }
-
-        // ADR-0033: `section` agora e referencia hidratada. Estes branches por
-        // setor continuam aqui porque definem a CONTAGEM DE QUESTOES por
-        // pilar, e nao existe endpoint que forneca esse numero por setor —
-        // remove-los sem uma fonte de dado quebraria a tela. Fica registrado
-        // como pendencia do B0.
-        const sectionName =
-          typeof data.section === 'object'
-            ? (data.section as any)?.name
-            : data.section;
 
         if(sectionName === 'Industry') {
           this.environmentalQuestions = 12
