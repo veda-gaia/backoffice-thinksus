@@ -134,12 +134,29 @@
 
     <mat-tab label="Sugestões IA">
       <div class="ai-suggestions-container">
-        <div
-          class="ai-suggestion-card"
-          *ngFor="let suggestion of aiSuggestions"
-        >
+        <!-- Lista regerada: os _id da tela nao existem mais no banco. -->
+        <div *ngIf="aiListaDesatualizada" class="alerta-lista-desatualizada">
+          <p>
+            A avaliação foi reenviada e as sugestões foram regeradas. A lista
+            aberta aqui está desatualizada — recarregue antes de continuar.
+          </p>
+          <button class="btn-novo-usuario" (click)="recarregarSugestoes()">
+            Recarregar sugestões
+          </button>
+        </div>
+
+        <!-- Um bloco por AREA, agrupado por pilar (ADR-0031). A quantidade e
+             dinamica: so vem area que teve vulnerabilidade. -->
+        <ng-container *ngFor="let grupo of aiGroups">
+          <h3 class="ai-pilar-title">{{ grupo.pilarLabel }}</h3>
+
+          <div
+            class="ai-suggestion-card"
+            *ngFor="let item of grupo.areas"
+          >
+          <ng-container *ngIf="item.suggestion as suggestion">
           <div class="ai-suggestion-header">
-            <span class="badge-area">{{ suggestion.area }}</span>
+            <span class="badge-area">{{ item.areaLabel }}</span>
             <span
               class="badge-status"
               [ngClass]="'status-' + suggestion.status.toLowerCase()"
@@ -168,9 +185,10 @@
           </div>
 
           <div *ngIf="editingSuggestionId === suggestion._id">
+            <!-- Paragrafo por area: precisa de espaco para editar de verdade. -->
             <textarea
               class="form-control"
-              rows="3"
+              rows="8"
               [(ngModel)]="editingText"
             ></textarea>
             <div class="ai-suggestion-actions">
@@ -185,7 +203,9 @@
               </button>
             </div>
           </div>
-        </div>
+          </ng-container>
+          </div>
+        </ng-container>
 
         <p *ngIf="!aiSuggestions.length" class="no-suggestions">
           Nenhuma sugestão de IA disponível ainda para esta avaliação.

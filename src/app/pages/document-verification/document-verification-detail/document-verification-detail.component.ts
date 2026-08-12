@@ -7,6 +7,11 @@ import { DocumentVerificationService } from "src/app/services/document-verificat
 import { EsgRatingService } from "src/app/services/esg-rating.service";
 import { AiSuggestionService } from "src/app/services/ai-suggestion.service";
 import { AiSuggestionItemInterface } from "src/app/interfaces/ai-suggestion/ai-suggestion.interface";
+import {
+  AREA_LABELS,
+  PILAR_BY_AREA,
+  PILAR_LABELS,
+} from "src/app/enums/answer-area.enum";
 import { AiSuggestionStatusEnum } from "src/app/enums/ai-suggestion-status.enum";
 import { finalize, forkJoin } from "rxjs";
 import { NgxSpinnerService } from "ngx-spinner";
@@ -32,6 +37,16 @@ export class DocumentVerificationDetailComponent
   score: number = 0;
 
   aiSuggestions: AiSuggestionItemInterface[] = [];
+  /** Blocos por pilar -> area, para a exibicao agrupada (ADR-0031). */
+  aiGroups: Array<{
+    pilar: string;
+    pilarLabel: string;
+    areas: Array<{ areaLabel: string; suggestion: AiSuggestionItemInterface }>;
+  }> = [];
+  esgRatingId = "";
+  generationRevision = 0;
+  generationStatus = "";
+  aiListaDesatualizada = false;
   editingSuggestionId: string | null = null;
   editingText = "";
   readonly AiSuggestionStatusEnum = AiSuggestionStatusEnum;
@@ -47,6 +62,7 @@ export class DocumentVerificationDetailComponent
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {
+      this.esgRatingId = id;
       this.spinner.show();
       forkJoin({
         rating: this.service.getById(id),
@@ -83,12 +99,46 @@ export class DocumentVerificationDetailComponent
             this.company = rating.company;
             this.score = rating.esgScore;
 
-            this.aiSuggestions = (aiSuggestions || []).flatMap(
-              (doc) => doc.suggestions,
-            );
+            // Um documento vigente por avaliacao desde o indice unique.
+            const doc = (aiSuggestions || [])[0];
+            this.aiSuggestions = doc?.suggestions ?? [];
+            this.generationRevision = doc?.generationRevision ?? 0;
+            this.generationStatus = doc?.generationStatus ?? "";
+            this.aiListaDesatualizada = false;
+            this.agruparSugestoes();
           },
         });
     }
+  }
+
+  /**
+   * Agrupa as sugestoes por pilar -> area. A quantidade e DINAMICA: so vem
+   * area que teve vulnerabilidade, entao pode ser 9, 12 ou 3 — nunca assumir
+   * um numero fixo.
+   */
+  private agruparSugestoes(): void {
+    const porPilar = new Map<string, any[]>();
+
+    for (const sug of this.aiSuggestions) {
+      const pilar = PILAR_BY_AREA[sug.area];
+      if (!pilar) {
+        console.error(
+          `[Curadoria] Area desconhecida "${sug.area}" na sugestao ${sug._id}; ignorada.`,
+        );
+        continue;
+      }
+      const lista = porPilar.get(pilar) ?? [];
+      lista.push({ areaLabel: AREA_LABELS[sug.area] ?? sug.area, suggestion: sug });
+      porPilar.set(pilar, lista);
+    }
+
+    this.aiGroups = ["E", "S", "G"]
+      .filter((p) => (porPilar.get(p) ?? []).length > 0)
+      .map((p) => ({
+        pilar: p,
+        pilarLabel: PILAR_LABELS[p],
+        areas: porPilar.get(p) ?? [],
+      }));
   }
 
   isAllApproved(): boolean {
@@ -97,7 +147,11 @@ export class DocumentVerificationDetailComponent
 
   canSubmitReview(): boolean {
     const gate1 = this.isAllApproved();
+    // Exige geracao bem-sucedida: um documento FAILED tem `suggestions: []`,
+    // e `[].every()` e true por vacuidade — a avaliacao passaria o gate sem
+    // curadoria nenhuma.
     const gate2 =
+      this.generationStatus === "SUCCESS" &&
       this.aiSuggestions.length > 0 &&
       this.aiSuggestions.every(
         (s) =>
@@ -111,13 +165,14 @@ export class DocumentVerificationDetailComponent
   approveSuggestion(suggestion: AiSuggestionItemInterface): void {
     this.spinner.show();
     this.aiSuggestionService
-      .approve(suggestion._id)
+      .approve(suggestion._id, this.esgRatingId, this.generationRevision)
       .pipe(finalize(() => this.spinner.hide()))
       .subscribe({
         next: () => {
           suggestion.status = AiSuggestionStatusEnum.APPROVED;
         },
         error: (err) => {
+          if (this.tratarListaDesatualizada(err)) return;
           console.error("Erro ao aprovar sugestão", err);
         },
       });
@@ -136,7 +191,12 @@ export class DocumentVerificationDetailComponent
   saveEditSuggestion(suggestion: AiSuggestionItemInterface): void {
     this.spinner.show();
     this.aiSuggestionService
-      .edit(suggestion._id, { textPt: this.editingText })
+      .edit(
+        suggestion._id,
+        { textPt: this.editingText },
+        this.esgRatingId,
+        this.generationRevision,
+      )
       .pipe(finalize(() => this.spinner.hide()))
       .subscribe({
         next: () => {
@@ -145,9 +205,28 @@ export class DocumentVerificationDetailComponent
           this.cancelEditSuggestion();
         },
         error: (err) => {
+          if (this.tratarListaDesatualizada(err)) return;
           console.error("Erro ao editar sugestão", err);
         },
       });
+  }
+
+  /**
+   * 409 AI_SUGGESTIONS_STALE: o cliente reenviou a avaliacao e as sugestoes
+   * foram regeradas, entao os _id da tela nao existem mais. Antes disso a API
+   * so dizia "Suggestion <id> not found" e o auditor concluia que o botao
+   * estava quebrado.
+   */
+  private tratarListaDesatualizada(err: any): boolean {
+    const codigo = err?.error?.code ?? err?.code;
+    if (err?.status !== 409 && codigo !== "AI_SUGGESTIONS_STALE") return false;
+
+    this.aiListaDesatualizada = true;
+    return true;
+  }
+
+  recarregarSugestoes(): void {
+    this.ngOnInit();
   }
 
   ngAfterViewInit(): void {

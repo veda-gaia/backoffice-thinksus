@@ -21,18 +21,38 @@ export class AiSuggestionService extends BaseService {
       .pipe(map(this.extractData), catchError(this.serviceError));
   }
 
-  approve(suggestionItemId: string): Observable<AiSuggestionInterface> {
+  /**
+   * `esgRatingId` e `generationRevision` sao obrigatorios: cada geracao
+   * substitui o array e REGENERA os _id dos subdocumentos. Sem a revisao, uma
+   * lista aberta antes de um reenvio devolveria "Suggestion not found" sem
+   * dizer o porque.
+   */
+  approve(
+    suggestionItemId: string,
+    esgRatingId: string,
+    generationRevision: number,
+  ): Observable<AiSuggestionInterface> {
     return this.httpClient
-      .put(`${this.url}/${suggestionItemId}/approve`, {}, this.authorizedHeader())
+      .put(
+        `${this.url}/${suggestionItemId}/approve`,
+        {},
+        this.authorizedHeader({ esgRatingId, generationRevision }),
+      )
       .pipe(map(this.extractData), catchError(this.serviceError));
   }
 
   edit(
     suggestionItemId: string,
     dto: { textPt?: string; textEn?: string; textEs?: string },
+    esgRatingId: string,
+    generationRevision: number,
   ): Observable<AiSuggestionInterface> {
     return this.httpClient
-      .put(`${this.url}/${suggestionItemId}/edit`, dto, this.authorizedHeader())
+      .put(
+        `${this.url}/${suggestionItemId}/edit`,
+        dto,
+        this.authorizedHeader({ esgRatingId, generationRevision }),
+      )
       .pipe(map(this.extractData), catchError(this.serviceError));
   }
 }

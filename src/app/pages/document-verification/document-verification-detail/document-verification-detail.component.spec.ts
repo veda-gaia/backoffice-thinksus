@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -27,19 +27,18 @@ describe('DocumentVerificationDetailComponent', () => {
     {
       _id: 'doc1',
       esgRatingId: 'rating1',
-      section: 'Agribusiness',
+      generationRevision: 2,
+      generationStatus: 'SUCCESS',
       suggestions: [
         {
           _id: 'item1',
-          area: 'E',
-          questionId: 'q1',
+          area: 'Nature',
           text: { pt: 'Sugestão 1', en: '', es: '' },
           status: AiSuggestionStatusEnum.PENDING,
         },
         {
           _id: 'item2',
-          area: 'S',
-          questionId: 'q2',
+          area: 'Fair_Work',
           text: { pt: 'Sugestão 2', en: '', es: '' },
           status: AiSuggestionStatusEnum.APPROVED,
         },
@@ -103,6 +102,7 @@ describe('DocumentVerificationDetailComponent', () => {
     });
 
     it('should allow submission when all docs approved and all suggestions APPROVED or EDITED', () => {
+      component.generationStatus = 'SUCCESS';
       component.aiSuggestions = [
         { ...mockAiSuggestions[0].suggestions[0], status: AiSuggestionStatusEnum.APPROVED } as any,
         { ...mockAiSuggestions[0].suggestions[1], status: AiSuggestionStatusEnum.EDITED } as any,
@@ -118,7 +118,13 @@ describe('DocumentVerificationDetailComponent', () => {
 
       component.approveSuggestion(suggestion);
 
-      expect(aiSuggestionServiceSpy.approve).toHaveBeenCalledWith('item1');
+      // Envia tambem o rating e a revisao vigente: sem isso a API nao distingue
+      // "lista velha" de "item invalido".
+      expect(aiSuggestionServiceSpy.approve).toHaveBeenCalledWith(
+        'item1',
+        component.esgRatingId,
+        component.generationRevision,
+      );
       expect(suggestion.status).toBe(AiSuggestionStatusEnum.APPROVED);
     });
   });
@@ -132,12 +138,38 @@ describe('DocumentVerificationDetailComponent', () => {
       component.editingText = 'Texto editado';
       component.saveEditSuggestion(suggestion);
 
-      expect(aiSuggestionServiceSpy.edit).toHaveBeenCalledWith('item1', {
-        textPt: 'Texto editado',
-      });
+      expect(aiSuggestionServiceSpy.edit).toHaveBeenCalledWith(
+        'item1',
+        { textPt: 'Texto editado' },
+        component.esgRatingId,
+        component.generationRevision,
+      );
       expect(suggestion.text.pt).toBe('Texto editado');
       expect(suggestion.status).toBe(AiSuggestionStatusEnum.EDITED);
       expect(component.editingSuggestionId).toBeNull();
+    });
+  });
+
+  describe('geracao FAILED e lista desatualizada', () => {
+    it('bloqueia o envio quando a geracao falhou, mesmo sem itens pendentes', () => {
+      // Documento FAILED tem suggestions: [], e [].every() e true por
+      // vacuidade — o gate passaria sem curadoria nenhuma.
+      component.generationStatus = 'FAILED';
+      component.aiSuggestions = [];
+
+      expect(component.canSubmitReview()).toBe(false);
+    });
+
+    it('sinaliza lista desatualizada no 409 AI_SUGGESTIONS_STALE', () => {
+      const suggestion = component.aiSuggestions[0];
+      aiSuggestionServiceSpy.approve.and.returnValue(
+        throwError(() => ({ status: 409, error: { code: 'AI_SUGGESTIONS_STALE' } })),
+      );
+
+      component.approveSuggestion(suggestion);
+
+      expect(component.aiListaDesatualizada).toBe(true);
+      expect(suggestion.status).not.toBe(AiSuggestionStatusEnum.APPROVED);
     });
   });
 });
