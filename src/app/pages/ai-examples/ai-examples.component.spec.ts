@@ -5,8 +5,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { AiExamplesComponent } from './ai-examples.component';
 import { AiExampleService } from 'src/app/services/ai-example.service';
-import { PilarEnum } from 'src/app/enums/pilar.enum';
-import { CompanySectionEnum } from 'src/app/enums/company-section.enum';
+import { AnswerAreaEnum } from 'src/app/enums/answer-area.enum';
+import { SectionService } from 'src/app/services/sections.service';
 
 describe('AiExamplesComponent', () => {
   let component: AiExamplesComponent;
@@ -17,8 +17,8 @@ describe('AiExamplesComponent', () => {
   const mockExamples = [
     {
       _id: '1',
-      pilar: PilarEnum.E,
-      setor: CompanySectionEnum.Agribusiness,
+      area: AnswerAreaEnum.Nature,
+      section: { _id: 'sec1', name: 'Cannabis' } as any,
       score: 80,
       inputContext: 'ctx',
       expectedOutput: 'output',
@@ -41,6 +41,10 @@ describe('AiExamplesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AiExamplesComponent],
       providers: [
+        {
+          provide: SectionService,
+          useValue: { list: () => of([{ _id: 'sec1', name: 'Cannabis' }]) },
+        },
         { provide: AiExampleService, useValue: aiExampleServiceSpy },
         { provide: NgbModal, useValue: modalServiceSpy },
       ],
@@ -55,21 +59,21 @@ describe('AiExamplesComponent', () => {
   it('should create and load examples on init', () => {
     expect(component).toBeTruthy();
     expect(aiExampleServiceSpy.list).toHaveBeenCalledWith({
-      pilar: undefined,
-      setor: undefined,
+      area: undefined,
+      section: undefined,
     });
     expect(component.dataSource.data).toEqual(mockExamples as any);
   });
 
   it('should reload examples with the selected filters on change', () => {
-    component.filterPilar = PilarEnum.S;
-    component.filterSetor = CompanySectionEnum.Industry;
+    component.filterArea = AnswerAreaEnum.Fair_Work;
+    component.filterSection = 'sec1';
 
     component.onFilterChange();
 
     expect(aiExampleServiceSpy.list).toHaveBeenCalledWith({
-      pilar: PilarEnum.S,
-      setor: CompanySectionEnum.Industry,
+      area: AnswerAreaEnum.Fair_Work,
+      section: 'sec1',
     });
   });
 

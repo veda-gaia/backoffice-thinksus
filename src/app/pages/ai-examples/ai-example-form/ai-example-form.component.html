@@ -9,17 +9,25 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-3">
       <label class="form-label">Pilar</label>
-      <select class="form-select" formControlName="pilar">
+      <select class="form-select" formControlName="area">
         <option [ngValue]="null" disabled>Selecione</option>
-        <option *ngFor="let pilar of pilares" [value]="pilar">{{ pilar }}</option>
+        <optgroup *ngFor="let grupo of gruposDeArea" [label]="grupo.label">
+          <option *ngFor="let a of grupo.areas" [value]="a.value">
+            {{ a.label }}
+          </option>
+        </optgroup>
       </select>
     </div>
 
     <div class="mb-3">
       <label class="form-label">Setor (opcional, deixe em branco para exemplo genérico)</label>
-      <select class="form-select" formControlName="setor">
+      <select
+        class="form-select"
+        formControlName="section"
+        (change)="onSectionChange()"
+      >
         <option [ngValue]="null">Genérico (todos os setores)</option>
-        <option *ngFor="let setor of setores" [value]="setor">{{ setor }}</option>
+        <option *ngFor="let s of sections" [value]="s._id">{{ s.name }}</option>
       </select>
     </div>
 

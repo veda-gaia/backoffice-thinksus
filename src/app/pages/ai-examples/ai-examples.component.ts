@@ -4,8 +4,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AiExampleService } from 'src/app/services/ai-example.service';
 import { AiExampleInterface } from 'src/app/interfaces/ai-example/ai-example.interface';
-import { PilarEnum } from 'src/app/enums/pilar.enum';
-import { CompanySectionEnum } from 'src/app/enums/company-section.enum';
+import {
+  AnswerAreaEnum,
+  AREA_LABELS,
+  PILAR_BY_AREA,
+  PILAR_LABELS,
+} from 'src/app/enums/answer-area.enum';
+import { SectionService } from 'src/app/services/sections.service';
+import { SectionInterface } from 'src/app/interfaces/forms/section.interface';
 import { AiExampleFormComponent } from './ai-example-form/ai-example-form.component';
 
 @Component({
@@ -14,23 +20,46 @@ import { AiExampleFormComponent } from './ai-example-form/ai-example-form.compon
   styleUrls: ['./ai-examples.component.scss'],
 })
 export class AiExamplesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['pilar', 'setor', 'score', 'inputContext', 'acoes'];
+  displayedColumns: string[] = ['area', 'section', 'score', 'inputContext', 'acoes'];
   dataSource = new MatTableDataSource<AiExampleInterface>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  pilares = Object.values(PilarEnum);
-  setores = Object.values(CompanySectionEnum);
+  /** As 12 areas agrupadas por pilar, para o filtro. */
+  readonly gruposDeArea = ['E', 'S', 'G'].map((pilar) => ({
+    pilar,
+    label: PILAR_LABELS[pilar],
+    areas: Object.values(AnswerAreaEnum)
+      .filter((area) => PILAR_BY_AREA[area] === pilar)
+      .map((area) => ({ value: area, label: AREA_LABELS[area] })),
+  }));
 
-  filterPilar: PilarEnum | null = null;
-  filterSetor: CompanySectionEnum | null = null;
+  /** Carregados do banco (ADR-0033), nao de enum. */
+  sections: SectionInterface[] = [];
+
+  filterArea: AnswerAreaEnum | null = null;
+  filterSection: string | null = null;
 
   constructor(
     private readonly aiExampleService: AiExampleService,
     private readonly modalService: NgbModal,
+    private readonly sectionService: SectionService,
   ) {}
 
+  rotuloArea(area: string): string {
+    return AREA_LABELS[area] ?? area;
+  }
+
+  nomeSection(section: any): string {
+    if (!section) return 'Genérico';
+    return typeof section === 'object' ? section.name ?? 'Genérico' : 'Genérico';
+  }
+
   ngOnInit(): void {
+    this.sectionService.list().subscribe({
+      next: (sections) => (this.sections = sections || []),
+      error: () => (this.sections = []),
+    });
     this.loadExamples();
   }
 
@@ -41,8 +70,8 @@ export class AiExamplesComponent implements OnInit, AfterViewInit {
   loadExamples(): void {
     this.aiExampleService
       .list({
-        pilar: this.filterPilar ?? undefined,
-        setor: this.filterSetor ?? undefined,
+        area: this.filterArea ?? undefined,
+        section: this.filterSection ?? undefined,
       })
       .subscribe({
         next: (examples) => {

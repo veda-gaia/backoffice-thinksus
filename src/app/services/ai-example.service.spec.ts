@@ -5,8 +5,7 @@ import {
 } from '@angular/common/http/testing';
 import { AiExampleService } from './ai-example.service';
 import { environment } from 'src/environments/environment';
-import { PilarEnum } from '../enums/pilar.enum';
-import { CompanySectionEnum } from '../enums/company-section.enum';
+import { AnswerAreaEnum } from '../enums/answer-area.enum';
 
 describe('AiExampleService', () => {
   let service: AiExampleService;
@@ -35,13 +34,13 @@ describe('AiExampleService', () => {
     req.flush({ data: [] });
   });
 
-  it('should list examples filtered by pilar and setor', () => {
+  it('should list examples filtered by area and section', () => {
     service
-      .list({ pilar: PilarEnum.E, setor: CompanySectionEnum.Agribusiness })
+      .list({ area: AnswerAreaEnum.Nature, section: 'sec1' })
       .subscribe();
 
     const req = httpMock.expectOne(
-      `${baseUrl}?pilar=E&setor=Agribusiness`,
+      `${baseUrl}?area=Nature&section=sec1`,
     );
     expect(req.request.method).toBe('GET');
     req.flush({ data: [] });
@@ -49,7 +48,7 @@ describe('AiExampleService', () => {
 
   it('should create an example', () => {
     const dto = {
-      pilar: PilarEnum.E,
+      area: AnswerAreaEnum.Nature,
       score: 80,
       inputContext: 'ctx',
       expectedOutput: 'output',
