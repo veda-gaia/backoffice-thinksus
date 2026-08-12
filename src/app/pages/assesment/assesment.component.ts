@@ -67,7 +67,17 @@ export class AssesmentComponent {
           this.companySection = 'agro'
         }
 
-        if(data.section === 'Industry') {
+        // ADR-0033: `section` agora e referencia hidratada. Estes branches por
+        // setor continuam aqui porque definem a CONTAGEM DE QUESTOES por
+        // pilar, e nao existe endpoint que forneca esse numero por setor —
+        // remove-los sem uma fonte de dado quebraria a tela. Fica registrado
+        // como pendencia do B0.
+        const sectionName =
+          typeof data.section === 'object'
+            ? (data.section as any)?.name
+            : data.section;
+
+        if(sectionName === 'Industry') {
           this.environmentalQuestions = 12
           this.socialQuestions = 15
           this.governanceQuestions = 14
@@ -75,7 +85,7 @@ export class AssesmentComponent {
           this.companySection = 'industry'
         }
 
-        if(data.section === 'Services') {
+        if(sectionName === 'Services') {
           this.environmentalQuestions = 13
           this.socialQuestions = 15
           this.governanceQuestions = 14
@@ -83,7 +93,7 @@ export class AssesmentComponent {
           this.companySection = 'service'
         }
         
-        this.handleInfo(data._id, data.section)
+        this.handleInfo(data._id, sectionName)
       },
       error: (err) => {
         console.log(err)
