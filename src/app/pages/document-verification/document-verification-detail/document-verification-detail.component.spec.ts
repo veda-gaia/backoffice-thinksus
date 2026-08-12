@@ -33,13 +33,13 @@ describe('DocumentVerificationDetailComponent', () => {
         {
           _id: 'item1',
           area: 'Nature',
-          text: { pt: 'Sugestão 1', en: '', es: '' },
+          text: { pt: 'SugestÃ£o 1', en: '', es: '' },
           status: AiSuggestionStatusEnum.PENDING,
         },
         {
           _id: 'item2',
           area: 'Fair_Work',
-          text: { pt: 'Sugestão 2', en: '', es: '' },
+          text: { pt: 'SugestÃ£o 2', en: '', es: '' },
           status: AiSuggestionStatusEnum.APPROVED,
         },
       ],
@@ -109,6 +109,22 @@ describe('DocumentVerificationDetailComponent', () => {
       ];
       expect(component.canSubmitReview()).toBe(true);
     });
+
+    it('should block submission when a document is rejected (Gate 1)', () => {
+      component.dataSource.data = [
+        { status: 'APPROVED' } as any,
+        { status: 'REJECTED' } as any,
+      ];
+      component.generationStatus = 'SUCCESS';
+      component.aiSuggestions = [
+        {
+          ...mockAiSuggestions[0].suggestions[0],
+          status: AiSuggestionStatusEnum.APPROVED,
+        } as any,
+      ];
+
+      expect(component.canSubmitReview()).toBe(false);
+    });
   });
 
   describe('approveSuggestion', () => {
@@ -153,7 +169,7 @@ describe('DocumentVerificationDetailComponent', () => {
   describe('geracao FAILED e lista desatualizada', () => {
     it('bloqueia o envio quando a geracao falhou, mesmo sem itens pendentes', () => {
       // Documento FAILED tem suggestions: [], e [].every() e true por
-      // vacuidade — o gate passaria sem curadoria nenhuma.
+      // vacuidade â€” o gate passaria sem curadoria nenhuma.
       component.generationStatus = 'FAILED';
       component.aiSuggestions = [];
 
@@ -173,3 +189,4 @@ describe('DocumentVerificationDetailComponent', () => {
     });
   });
 });
+

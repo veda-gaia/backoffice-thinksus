@@ -84,7 +84,7 @@ export class DocumentVerificationDetailComponent
                   a.answer === "Yes"
                     ? "Sim"
                     : a.answer === "No"
-                      ? "Não"
+                      ? "NÃ£o"
                       : a.answer,
                 document:
                   a.documentsPath && a.documentsPath.length > 0
@@ -113,7 +113,7 @@ export class DocumentVerificationDetailComponent
 
   /**
    * Agrupa as sugestoes por pilar -> area. A quantidade e DINAMICA: so vem
-   * area que teve vulnerabilidade, entao pode ser 9, 12 ou 3 — nunca assumir
+   * area que teve vulnerabilidade, entao pode ser 9, 12 ou 3 â€” nunca assumir
    * um numero fixo.
    */
   private agruparSugestoes(): void {
@@ -142,13 +142,15 @@ export class DocumentVerificationDetailComponent
   }
 
   isAllApproved(): boolean {
-    return this.dataSource.data.every((row: any) => row.status !== "PENDING");
+    return this.dataSource.data.every(
+      (row: any) => row.status === "APPROVED"
+    );
   }
 
   canSubmitReview(): boolean {
     const gate1 = this.isAllApproved();
     // Exige geracao bem-sucedida: um documento FAILED tem `suggestions: []`,
-    // e `[].every()` e true por vacuidade — a avaliacao passaria o gate sem
+    // e `[].every()` e true por vacuidade â€” a avaliacao passaria o gate sem
     // curadoria nenhuma.
     const gate2 =
       this.generationStatus === "SUCCESS" &&
@@ -173,7 +175,7 @@ export class DocumentVerificationDetailComponent
         },
         error: (err) => {
           if (this.tratarListaDesatualizada(err)) return;
-          console.error("Erro ao aprovar sugestão", err);
+          console.error("Erro ao aprovar sugestÃ£o", err);
         },
       });
   }
@@ -206,7 +208,7 @@ export class DocumentVerificationDetailComponent
         },
         error: (err) => {
           if (this.tratarListaDesatualizada(err)) return;
-          console.error("Erro ao editar sugestão", err);
+          console.error("Erro ao editar sugestÃ£o", err);
         },
       });
   }
@@ -257,8 +259,9 @@ export class DocumentVerificationDetailComponent
           this.router.navigate(["/document-verification"]);
         },
         error: (err) => {
-          console.error("Erro ao enviar revisão", err);
+          console.error("Erro ao enviar revisÃ£o", err);
         },
       });
   }
 }
+

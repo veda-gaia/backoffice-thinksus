@@ -121,9 +121,11 @@ export class AiExampleFormComponent implements OnInit {
 
     const dto = {
       ...this.form.value,
-      // Vazio significa exemplo generico; o backend espera ausencia, nao null.
-      section: this.form.value.section || undefined,
-      segment: this.form.value.segment || undefined,
+      // `null` e intencional: no update, omitir os campos preservaria a
+      // taxonomia antiga e impediria transformar um exemplo especifico em
+      // generico.
+      section: this.form.value.section || null,
+      segment: this.form.value.segment || null,
     };
 
     const request$ = this.exampleId
@@ -142,3 +144,4 @@ export class AiExampleFormComponent implements OnInit {
     this.activeModal.dismiss();
   }
 }
+

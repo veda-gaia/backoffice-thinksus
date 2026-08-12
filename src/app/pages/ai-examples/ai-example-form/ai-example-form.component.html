@@ -8,7 +8,7 @@
 <div class="modal-body">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-3">
-      <label class="form-label">Pilar</label>
+      <label class="form-label">Ãrea</label>
       <select class="form-select" formControlName="area">
         <option [ngValue]="null" disabled>Selecione</option>
         <optgroup *ngFor="let grupo of gruposDeArea" [label]="grupo.label">
@@ -20,19 +20,33 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Setor (opcional, deixe em branco para exemplo genérico)</label>
+      <label class="form-label">Setor (opcional, deixe em branco para exemplo genÃ©rico)</label>
       <select
         class="form-select"
         formControlName="section"
         (change)="onSectionChange()"
       >
-        <option [ngValue]="null">Genérico (todos os setores)</option>
+        <option [ngValue]="null">GenÃ©rico (todos os setores)</option>
         <option *ngFor="let s of sections" [value]="s._id">{{ s.name }}</option>
       </select>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Pontuação de referência</label>
+      <label class="form-label">Segmento (opcional)</label>
+      <select
+        class="form-select"
+        formControlName="segment"
+        [disabled]="!form.get('section')?.value"
+      >
+        <option [ngValue]="null">Todos os segmentos do setor</option>
+        <option *ngFor="let s of segments" [value]="s._id">
+          {{ s.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">PontuaÃ§Ã£o de referÃªncia</label>
       <input type="number" class="form-control" formControlName="score" min="0" max="100" />
     </div>
 
@@ -42,7 +56,7 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Sugestão exemplar (saída esperada)</label>
+      <label class="form-label">SugestÃ£o exemplar (saÃ­da esperada)</label>
       <textarea class="form-control" rows="3" formControlName="expectedOutput"></textarea>
     </div>
 
@@ -56,3 +70,4 @@
     </div>
   </form>
 </div>
+
