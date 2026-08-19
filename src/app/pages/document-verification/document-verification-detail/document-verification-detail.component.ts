@@ -16,11 +16,12 @@ import { AiSuggestionStatusEnum } from "src/app/enums/ai-suggestion-status.enum"
 import { finalize, forkJoin } from "rxjs";
 import { NgxSpinnerService } from "ngx-spinner";
 
-interface DocumentRow {
+interface AnswerView {
   question: string;
   answer: string;
-  document: string;
-  status: string;
+  dimension: string;
+  area: string;
+  hasDocument: boolean;
 }
 @Component({
   selector: "app-document-verification-detail",
@@ -35,6 +36,7 @@ export class DocumentVerificationDetailComponent
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   company: any;
   score: number = 0;
+  allAnswers: AnswerView[] = [];
 
   aiSuggestions: AiSuggestionItemInterface[] = [];
   /** Blocos por pilar -> area, para a exibicao agrupada (ADR-0031). */
@@ -75,17 +77,26 @@ export class DocumentVerificationDetailComponent
         )
         .subscribe({
           next: ({ rating, aiSuggestions }) => {
-            this.dataSource.data = rating.answers
+            const answers = rating.answers ?? [];
+
+            this.allAnswers = answers.map((a: any) => ({
+              question: a.questionId?.name ?? "Pergunta não identificada",
+              answer: this.formatAnswer(a.answer),
+              dimension: a.questionId?.dimension ?? "",
+              area:
+                a.questionId?.area?.name ??
+                a.questionId?.area?.code ??
+                a.questionId?.area ??
+                "",
+              hasDocument: Boolean(a.documentsPath?.length),
+            }));
+
+            this.dataSource.data = answers
               .filter((a: any) => a.documentsPath && a.documentsPath.length > 0)
               .map((a: any) => ({
                 questionId: a.questionId._id,
                 question: a.questionId.name,
-                answer:
-                  a.answer === "Yes"
-                    ? "Sim"
-                    : a.answer === "No"
-                      ? "NÃ£o"
-                      : a.answer,
+                answer: this.formatAnswer(a.answer),
                 document:
                   a.documentsPath && a.documentsPath.length > 0
                     ? a.documentsPath
@@ -109,6 +120,54 @@ export class DocumentVerificationDetailComponent
           },
         });
     }
+  }
+
+  private formatAnswer(answer: string): string {
+    const labels: Record<string, string> = {
+      Yes: "Sim",
+      No: "Não",
+      "Not apply": "Não se aplica",
+    };
+
+    return labels[answer] ?? answer ?? "—";
+  }
+
+  getDimensionLabel(dimension: string): string {
+    return (
+      {
+        E: "Ambiental",
+        S: "Social",
+        G: "Governança",
+      }[dimension] ?? "Geral"
+    );
+  }
+
+  getDimensionClass(dimension: string): string {
+    return `dimension-${(dimension || "general").toLowerCase()}`;
+  }
+
+  getSuggestionStatusLabel(status: string): string {
+    return (
+      {
+        PENDING: "Pendente",
+        APPROVED: "Aprovada",
+        EDITED: "Editada",
+        REJECTED: "Rejeitada",
+      }[status] ?? status
+    );
+  }
+
+  get approvedDocumentsCount(): number {
+    return this.dataSource.data.filter((row: any) => row.status === "APPROVED")
+      .length;
+  }
+
+  get curatedSuggestionsCount(): number {
+    return this.aiSuggestions.filter(
+      (suggestion) =>
+        suggestion.status === AiSuggestionStatusEnum.APPROVED ||
+        suggestion.status === AiSuggestionStatusEnum.EDITED,
+    ).length;
   }
 
   /**

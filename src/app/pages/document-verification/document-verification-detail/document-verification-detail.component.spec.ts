@@ -91,6 +91,45 @@ describe('DocumentVerificationDetailComponent', () => {
     expect(component.aiSuggestions[0]._id).toBe('item1');
   });
 
+  it('should expose every assessment answer in the read-only answers tab', () => {
+    esgRatingServiceSpy.getById.and.returnValue(
+      of({
+        ...mockRating,
+        answers: [
+          {
+            answer: 'Yes',
+            documentsPath: [],
+            questionId: {
+              _id: 'question1',
+              name: 'A empresa possui uma política ambiental?',
+              dimension: 'E',
+              area: { name: 'Natureza' },
+            },
+          },
+          {
+            answer: 'Not apply',
+            documentsPath: ['evidence.pdf'],
+            status: 'PENDING',
+            questionId: {
+              _id: 'question2',
+              name: 'A empresa monitora sua cadeia de valor?',
+              dimension: 'S',
+              area: { name: 'Cadeia de valor' },
+            },
+          },
+        ],
+      }),
+    );
+
+    component.ngOnInit();
+
+    expect(component.allAnswers.length).toBe(2);
+    expect(component.allAnswers[0].answer).toBe('Sim');
+    expect(component.allAnswers[1].answer).toBe('Não se aplica');
+    expect(component.allAnswers[1].hasDocument).toBe(true);
+    expect(component.dataSource.data.length).toBe(1);
+  });
+
   describe('canSubmitReview (Dual-Gate)', () => {
     it('should block submission when there are pending AI suggestions (Gate 2)', () => {
       expect(component.canSubmitReview()).toBe(false);
