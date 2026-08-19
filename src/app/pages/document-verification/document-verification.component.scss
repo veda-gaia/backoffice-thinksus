@@ -44,6 +44,9 @@
     border: 1px solid #e1e6dd;
     border-radius: 12px;
     padding: 12px;
+    // As 8 colunas não cabem no card de 1178px. Em vez de deixar Status e Ações
+    // saírem da tela sem aviso, a tabela rola dentro do próprio container.
+    overflow-x: auto;
 
     table {
       width: 100%;
@@ -53,17 +56,21 @@
         font-size: 12px;
         font-weight: 700;
         color: #222021;
-        padding: 14px 24px;
+        padding: 14px 16px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         border-bottom: none;
+        // Cabeçalhos longos ("Documentos verificados") quebram em duas linhas
+        // em vez de estourar a largura da coluna.
+        white-space: normal;
+        line-height: 1.3;
       }
 
       td {
         font-size: 14px;
         font-weight: 500;
         color: rgba(0, 0, 0, 0.64);
-        padding: 14px 24px;
+        padding: 14px 16px;
         border-bottom: none;
 
         mat-icon {
@@ -81,22 +88,28 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    // Abaixo disso as colunas ficam ilegíveis; o container passa a rolar.
+    min-width: 1060px;
   }
 
   .col-company {
-    width: 200px;
+    width: 190px;
+  }
+
+  .col-ref {
+    width: 150px;
   }
 
   .col-number-itens {
-    width: 170px;
+    width: 130px;
   }
 
   .col-actions {
-    width: 100px;
+    width: 80px;
   }
 
   .col-status {
-    width: 180px;
+    width: 160px;
   }
   .mat-cell,
   .mat-header-cell {

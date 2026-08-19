@@ -31,6 +31,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { MatTabsModule } from "@angular/material/tabs";
 import { UserEditComponent } from "./pages/user-edit/user-edit.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { LoginComponent } from "./pages/login/login.component";
@@ -83,6 +84,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
+    MatTabsModule,
 
     CommonModule,
     ReactiveFormsModule,

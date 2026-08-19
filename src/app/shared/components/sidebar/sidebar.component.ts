@@ -44,7 +44,11 @@ export class SidebarComponent implements OnInit {
   }
 
   expandActiveMenu(url: string) {
-    if (url.startsWith("/document-verification") || url.startsWith("/forms")) {
+    if (
+      url.startsWith("/document-verification") ||
+      url.startsWith("/forms") ||
+      url.startsWith("/ai-examples")
+    ) {
       this.openMenus["esg"] = true;
     }
     if (url.startsWith("/governance")) {

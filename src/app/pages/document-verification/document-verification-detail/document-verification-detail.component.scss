@@ -124,6 +124,71 @@
     border: 1px solid #ccc;
   }
 
+  .dual-gate-tabs {
+    margin-top: 8px;
+  }
+
+  .ai-suggestions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 4px;
+  }
+
+  .ai-suggestion-card {
+    background: #fafaf8;
+    border: 1px solid #e1e6dd;
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .ai-suggestion-header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .badge-area,
+  .badge-status {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+
+  .badge-area {
+    background: #e1e6dd;
+    color: #1c4532;
+  }
+
+  .badge-status {
+    background: #f0f0f0;
+    color: rgba(0, 0, 0, 0.64);
+  }
+
+  .badge-status.status-approved,
+  .badge-status.status-edited {
+    background: #d7f2e3;
+    color: #1c4532;
+  }
+
+  .ai-suggestion-text {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 12px;
+  }
+
+  .ai-suggestion-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .no-suggestions {
+    color: rgba(0, 0, 0, 0.64);
+    font-size: 14px;
+  }
+
   .select-container select {
     border: none;
     padding: 8px;
