@@ -9,9 +9,13 @@ import { EsgRatingService } from "src/app/services/esg-rating.service";
 
 interface DocumentRow {
   company: string;
+  section: string;
+  segment: string;
+  esgScore: number;
   verifiedDocument: number;
   pendingDocument: number;
   status: string;
+  id: string;
 }
 
 @Component({
@@ -22,6 +26,9 @@ interface DocumentRow {
 export class DocumentVerificationComponent implements OnInit, AfterViewInit {
   displayedColumns = [
     "company",
+    "section",
+    "segment",
+    "esgScore",
     "verifiedDocument",
     "pendingDocument",
     "status",
@@ -56,6 +63,27 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
 
   getStatusLabel(status: string): string {
     return this.statusMap[status] || status;
+  }
+
+  // Setor/segmento vêm populados pela API como { _id, name }. Quando o populate
+  // não acontece o valor chega como ObjectId cru, que não deve ir pra tela.
+  private getRefName(ref: any): string {
+    if (!ref) return "-";
+
+    // Referência populada (formato atual): { _id, name }
+    if (typeof ref === "object") return ref.name || "-";
+
+    // A base carrega três formatos para section/segment, resultado de uma
+    // migração de enum para coleção de referência que nunca foi concluída:
+    // documento populado, ObjectId (cru ou em string) e o código de enum
+    // antigo ("Industry", "sugar_cane"). Só o último é legível por si — os
+    // ObjectId viram "-" porque a tela não tem como resolvê-los sem o populate,
+    // hoje impossível de ligar porque quebraria a listagem inteira.
+    if (typeof ref === "string") {
+      return /^[0-9a-fA-F]{24}$/.test(ref) ? "-" : ref;
+    }
+
+    return "-";
   }
 
   private loadData(): void {
@@ -93,6 +121,9 @@ export class DocumentVerificationComponent implements OnInit, AfterViewInit {
 
               return {
                 company: item.company.company,
+                section: this.getRefName(item.company.section),
+                segment: this.getRefName(item.company.segment),
+                esgScore: item.esgScore ?? 0,
                 verifiedDocument: verified,
                 pendingDocument: pending,
                 status: item.status,

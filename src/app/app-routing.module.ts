@@ -38,6 +38,13 @@ const routes: Routes = [
             (m) => m.GovernanceModule,
           ),
       },
+      {
+        path: "ai-examples",
+        loadChildren: () =>
+          import("./pages/ai-examples/ai-examples.module").then(
+            (m) => m.AiExamplesModule,
+          ),
+      },
       { path: "", redirectTo: "/login", pathMatch: "full" },
     ],
   },

@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { isDevMode } from '@angular/core';
 import { throwError } from 'rxjs';
 import CryptoUtil from '../util/crypto.util';
@@ -14,14 +14,31 @@ export abstract class BaseService {
     };
   }
 
-  protected authorizedHeader() {
+  /**
+   * `params` opcional para endpoints que precisam de query string junto do
+   * token (ex.: curadoria de sugestoes, que envia esgRatingId e
+   * generationRevision). Sem argumento o comportamento e o mesmo de antes.
+   */
+  protected authorizedHeader(params?: Record<string, string | number>) {
     const user = LocalStorageUtil.get(LocalStorageKeys.user);
-    return {
+    const options: any = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${user?.token}`,
       }),
     };
+
+    if (params) {
+      let httpParams = new HttpParams();
+      for (const [chave, valor] of Object.entries(params)) {
+        if (valor !== undefined && valor !== null) {
+          httpParams = httpParams.set(chave, String(valor));
+        }
+      }
+      options.params = httpParams;
+    }
+
+    return options;
   }
 
   protected authorizedHeaderMulti() {
