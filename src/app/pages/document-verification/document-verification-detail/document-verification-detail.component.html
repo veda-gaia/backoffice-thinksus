@@ -1,226 +1,279 @@
-<div class="card-score">
-  <div class="card-score-info">
-    <div class="form-header">
-      <h2>Auditoria Dual-Gate</h2>
-      <p>Informações da empresa e pontuação</p>
+<main class="audit-page">
+  <header class="audit-header">
+    <div>
+      <span class="audit-eyebrow">Revisão de avaliação ESG</span>
+      <h1>Auditoria Dual-Gate</h1>
+      <p>Valide as evidências e faça a curadoria das melhorias sugeridas.</p>
     </div>
 
-    <button class="btn-voltar" routerLink="/document-verification">
+    <button class="back-button" routerLink="/document-verification">
       <mat-icon>arrow_back</mat-icon>
-      Voltar
+      Voltar para avaliações
     </button>
-  </div>
+  </header>
 
-  <div class="fade-in row">
-    <div class="col">
-      <div
-        class="card-logged p-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-4 w-100"
-      >
-        <div class="flex-grow-1">
-          <p class="secondary-text f-size-1rem fw-500 pb-3">
-            {{ "IMPROVEMENTS_HUD.COMPANY" | translate }}:
-            <span class="fw-700 gray-text">{{ company?.company }}</span>
-          </p>
-
-          <p class="secondary-text f-size-1rem fw-500">
-            {{ "IMPROVEMENTS_HUD.SECTION" | translate }}:
-            <span class="fw-700 gray-text">{{ company?.section?.name || '-' }}</span>
-          </p>
-        </div>
-
-        <div class="flex-grow-1">
-          <p class="secondary-text f-size-1rem fw-500 pb-3">
-            {{ "IMPROVEMENTS_HUD.CNPJ" | translate }}:
-            <span class="fw-700 gray-text">{{ company?.cnpj }}</span>
-          </p>
-
-          <p class="secondary-text f-size-1rem fw-500">
-            {{ "IMPROVEMENTS_HUD.SEGMENT" | translate }}:
-            <span class="fw-700 gray-text"> {{ company?.segment?.name || '-' }} </span>
-          </p>
-        </div>
-
-        <div class="flex-grow-1">
-          <p
-            class="secondary-text text-end f-size-0-85rem l-height-1-25 fw-500"
-          >
-            {{ "IMPROVEMENTS_HUD.SCORE" | translate }}
-          </p>
-
-          <p class="system-success-text text-end f-size-3rem l-height-3 fw-700">
-            {{ score | number: "1.2-2" }}
-          </p>
-        </div>
+  <section class="company-overview" aria-label="Resumo da avaliação">
+    <div class="company-identity">
+      <span class="section-label">Empresa avaliada</span>
+      <h2>{{ company?.company || "—" }}</h2>
+      <div class="company-meta">
+        <span>
+          <small>Setor</small>
+          {{ company?.section?.name || "—" }}
+        </span>
+        <span>
+          <small>Segmento</small>
+          {{ company?.segment?.name || "—" }}
+        </span>
+        <span>
+          <small>CNPJ</small>
+          {{ company?.cnpj || "—" }}
+        </span>
       </div>
     </div>
-  </div>
 
-  <mat-tab-group class="dual-gate-tabs">
-    <mat-tab label="Documentos">
-      <div class="tabela-container">
-        <table mat-table [dataSource]="dataSource" class="full-width-table">
-          <ng-container matColumnDef="question">
-            <th mat-header-cell *matHeaderCellDef class="col-question">Questão</th>
-            <td mat-cell *matCellDef="let row">{{ row.question }}</td>
-          </ng-container>
+    <div class="score-panel">
+      <span>Pontuação ThinkSus</span>
+      <strong>{{ score | number: "1.2-2" }}</strong>
+      <small>Resultado enviado para revisão</small>
+    </div>
+  </section>
 
-          <ng-container matColumnDef="answer">
-            <th mat-header-cell *matHeaderCellDef class="col-answer">Resposta</th>
-            <td mat-cell *matCellDef="let row">{{ row.answer }}</td>
-          </ng-container>
+  <section class="audit-workspace">
+    <mat-tab-group class="dual-gate-tabs" animationDuration="180ms">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-number">01</span>
+          Perguntas e respostas
+          <span class="tab-count">{{ allAnswers.length }}</span>
+        </ng-template>
 
-          <ng-container matColumnDef="document">
-            <th mat-header-cell *matHeaderCellDef class="col-document">
-              Documento
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <ng-container *ngIf="row.document?.length; else noDocs">
-                <div *ngFor="let doc of row.document">
-                  <a [href]="doc" target="_blank" rel="noopener noreferrer">
-                    {{ doc.split("/").pop() }}
-                  </a>
-                </div>
-              </ng-container>
-              <ng-template #noDocs>—</ng-template>
-            </td>
-          </ng-container>
-
-          <!-- Status -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef class="col-status">Status</th>
-            <td mat-cell *matCellDef="let row">
-              <!-- Se tem documento: select editável -->
-              <div
-                class="select-container"
-                *ngIf="row.document?.length > 0; else fixedSelect"
-              >
-                <select [(ngModel)]="row.status">
-                  <option [ngValue]="null" disabled>Selecione</option>
-                  <option value="APPROVED">Aprovado</option>
-                  <option value="PENDING">Pendente</option>
-                  <option value="REJECTED">Reprovado</option>
-                </select>
-              </div>
-
-              <!-- Se não tem documento: select fixo com Approved -->
-              <ng-template #fixedSelect>
-                <div class="select-container">
-                  <select disabled>
-                    <option value="APPROVED" selected>Aprovado</option>
-                  </select>
-                </div>
-              </ng-template>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-          <!-- Quando não há dados -->
-          <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-              Sem dados para exibir.
-            </td>
-          </tr>
-        </table>
-
-        <mat-paginator
-          [pageSize]="10"
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </div>
-    </mat-tab>
-
-    <mat-tab label="Sugestões IA">
-      <div class="ai-suggestions-container">
-        <!-- Lista regerada: os _id da tela nao existem mais no banco. -->
-        <div *ngIf="aiListaDesatualizada" class="alerta-lista-desatualizada">
-          <p>
-            A avaliação foi reenviada e as sugestões foram regeradas. A lista
-            aberta aqui está desatualizada — recarregue antes de continuar.
-          </p>
-          <button class="btn-novo-usuario" (click)="recarregarSugestoes()">
-            Recarregar sugestões
-          </button>
-        </div>
-
-        <!-- Um bloco por AREA, agrupado por pilar (ADR-0031). A quantidade e
-             dinamica: so vem area que teve vulnerabilidade. -->
-        <ng-container *ngFor="let grupo of aiGroups">
-          <h3 class="ai-pilar-title">{{ grupo.pilarLabel }}</h3>
-
-          <div
-            class="ai-suggestion-card"
-            *ngFor="let item of grupo.areas"
-          >
-          <ng-container *ngIf="item.suggestion as suggestion">
-          <div class="ai-suggestion-header">
-            <span class="badge-area">{{ item.areaLabel }}</span>
-            <span
-              class="badge-status"
-              [ngClass]="'status-' + suggestion.status.toLowerCase()"
-            >
-              {{ suggestion.status }}
+        <div class="tab-content answers-tab">
+          <div class="tab-intro">
+            <div>
+              <h2>Respostas da avaliação</h2>
+              <p>Consulta somente leitura das respostas enviadas pela empresa.</p>
+            </div>
+            <span class="readonly-badge">
+              <mat-icon>visibility</mat-icon>
+              Somente visualização
             </span>
           </div>
 
-          <div *ngIf="editingSuggestionId !== suggestion._id">
-            <p class="ai-suggestion-text">{{ suggestion.text.pt }}</p>
-            <div class="ai-suggestion-actions">
-              <button
-                class="btn-novo-usuario"
-                (click)="approveSuggestion(suggestion)"
-                [disabled]="suggestion.status === AiSuggestionStatusEnum.APPROVED"
-              >
-                Aprovar
-              </button>
-              <button
-                class="btn-voltar"
-                (click)="startEditSuggestion(suggestion)"
-              >
-                Editar
-              </button>
-            </div>
+          <div class="answer-list" *ngIf="allAnswers.length; else noAnswers">
+            <article class="answer-card" *ngFor="let item of allAnswers; let i = index">
+              <div class="answer-index">{{ i + 1 | number: "2.0-0" }}</div>
+              <div class="answer-copy">
+                <div class="answer-tags">
+                  <span class="dimension-badge" [ngClass]="getDimensionClass(item.dimension)">
+                    {{ getDimensionLabel(item.dimension) }}
+                  </span>
+                  <span *ngIf="item.area" class="area-label">{{ item.area }}</span>
+                  <span *ngIf="item.hasDocument" class="evidence-label">
+                    <mat-icon>attach_file</mat-icon>
+                    Com evidência
+                  </span>
+                </div>
+                <h3>{{ item.question }}</h3>
+              </div>
+              <div class="answer-value" [class.answer-negative]="item.answer === 'Não'">
+                <small>Resposta</small>
+                <strong>{{ item.answer }}</strong>
+              </div>
+            </article>
           </div>
 
-          <div *ngIf="editingSuggestionId === suggestion._id">
-            <!-- Paragrafo por area: precisa de espaco para editar de verdade. -->
-            <textarea
-              class="form-control"
-              rows="8"
-              [(ngModel)]="editingText"
-            ></textarea>
-            <div class="ai-suggestion-actions">
-              <button
-                class="btn-novo-usuario"
-                (click)="saveEditSuggestion(suggestion)"
-              >
-                Salvar
-              </button>
-              <button class="btn-voltar" (click)="cancelEditSuggestion()">
-                Cancelar
-              </button>
-            </div>
-          </div>
-          </ng-container>
-          </div>
-        </ng-container>
+          <ng-template #noAnswers>
+            <div class="empty-state">Nenhuma resposta foi encontrada nesta avaliação.</div>
+          </ng-template>
+        </div>
+      </mat-tab>
 
-        <p *ngIf="!aiSuggestions.length" class="no-suggestions">
-          Nenhuma sugestão de IA disponível ainda para esta avaliação.
-        </p>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-number">02</span>
+          Documentos
+          <span class="tab-count">{{ dataSource.data.length }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-intro">
+            <div>
+              <h2>Validação de evidências</h2>
+              <p>Revise os arquivos anexados e defina o status de cada documento.</p>
+            </div>
+            <span class="progress-chip">
+              {{ approvedDocumentsCount }}/{{ dataSource.data.length }} aprovados
+            </span>
+          </div>
+
+          <div class="table-shell">
+            <table mat-table [dataSource]="dataSource" class="full-width-table">
+              <ng-container matColumnDef="question">
+                <th mat-header-cell *matHeaderCellDef>Questão</th>
+                <td mat-cell *matCellDef="let row">{{ row.question }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="answer">
+                <th mat-header-cell *matHeaderCellDef>Resposta</th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="answer-pill">{{ row.answer }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="document">
+                <th mat-header-cell *matHeaderCellDef>Documento</th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="document-links" *ngIf="row.document?.length; else noDocs">
+                    <a
+                      *ngFor="let doc of row.document"
+                      [href]="doc"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <mat-icon>description</mat-icon>
+                      {{ doc.split("/").pop() }}
+                    </a>
+                  </div>
+                  <ng-template #noDocs>—</ng-template>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status da evidência</th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="select-container">
+                    <select [(ngModel)]="row.status" [attr.aria-label]="'Status de ' + row.question">
+                      <option value="APPROVED">Aprovado</option>
+                      <option value="PENDING">Pendente</option>
+                      <option value="REJECTED">Reprovado</option>
+                    </select>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell empty-cell" [attr.colspan]="displayedColumns.length">
+                  Nenhum documento foi anexado nesta avaliação.
+                </td>
+              </tr>
+            </table>
+
+            <mat-paginator
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 20]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-number">03</span>
+          Sugestões IA
+          <span class="tab-count">{{ aiSuggestions.length }}</span>
+        </ng-template>
+
+        <div class="tab-content ai-suggestions-container">
+          <div class="tab-intro">
+            <div>
+              <h2>Curadoria das melhorias</h2>
+              <p>Aprove ou refine os textos antes de concluir a revisão.</p>
+            </div>
+            <span class="progress-chip">
+              {{ curatedSuggestionsCount }}/{{ aiSuggestions.length }} curadas
+            </span>
+          </div>
+
+          <div *ngIf="aiListaDesatualizada" class="stale-alert">
+            <mat-icon>sync_problem</mat-icon>
+            <p>
+              A avaliação foi reenviada e esta lista está desatualizada.
+              Recarregue as sugestões antes de continuar.
+            </p>
+            <button class="secondary-button" (click)="recarregarSugestoes()">
+              Recarregar
+            </button>
+          </div>
+
+          <section class="suggestion-group" *ngFor="let grupo of aiGroups">
+            <div class="pillar-heading">
+              <span class="pillar-mark">{{ grupo.pilar }}</span>
+              <div>
+                <h3>{{ grupo.pilarLabel }}</h3>
+                <p>{{ grupo.areas.length }} áreas com oportunidades</p>
+              </div>
+            </div>
+
+            <article class="suggestion-card" *ngFor="let item of grupo.areas">
+              <ng-container *ngIf="item.suggestion as suggestion">
+                <header class="suggestion-header">
+                  <span class="area-badge">{{ item.areaLabel }}</span>
+                  <span class="status-badge" [ngClass]="'status-' + suggestion.status.toLowerCase()">
+                    {{ getSuggestionStatusLabel(suggestion.status) }}
+                  </span>
+                </header>
+
+                <div *ngIf="editingSuggestionId !== suggestion._id">
+                  <p class="suggestion-text">{{ suggestion.text.pt }}</p>
+                  <div class="suggestion-actions">
+                    <button
+                      class="primary-button"
+                      (click)="approveSuggestion(suggestion)"
+                      [disabled]="suggestion.status === AiSuggestionStatusEnum.APPROVED"
+                    >
+                      <mat-icon>check</mat-icon>
+                      Aprovar texto
+                    </button>
+                    <button class="secondary-button" (click)="startEditSuggestion(suggestion)">
+                      <mat-icon>edit</mat-icon>
+                      Editar
+                    </button>
+                  </div>
+                </div>
+
+                <div class="edit-panel" *ngIf="editingSuggestionId === suggestion._id">
+                  <label>Texto da sugestão</label>
+                  <textarea rows="7" [(ngModel)]="editingText"></textarea>
+                  <div class="suggestion-actions">
+                    <button class="primary-button" (click)="saveEditSuggestion(suggestion)">
+                      Salvar alteração
+                    </button>
+                    <button class="secondary-button" (click)="cancelEditSuggestion()">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </article>
+          </section>
+
+          <div *ngIf="!aiSuggestions.length" class="empty-state">
+            Nenhuma sugestão de IA está disponível para esta avaliação.
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+
+  <footer class="review-footer">
+    <div class="gate-summary">
+      <div [class.gate-complete]="isAllApproved()">
+        <mat-icon>{{ isAllApproved() ? "check_circle" : "radio_button_unchecked" }}</mat-icon>
+        <span><small>Gate 1</small>Evidências aprovadas</span>
       </div>
-    </mat-tab>
-  </mat-tab-group>
+      <div [class.gate-complete]="curatedSuggestionsCount === aiSuggestions.length && aiSuggestions.length > 0">
+        <mat-icon>{{ curatedSuggestionsCount === aiSuggestions.length && aiSuggestions.length > 0 ? "check_circle" : "radio_button_unchecked" }}</mat-icon>
+        <span><small>Gate 2</small>Sugestões curadas</span>
+      </div>
+    </div>
 
-  <div class="actions">
-    <button
-      class="btn-novo-usuario"
-      (click)="sendReview()"
-      [disabled]="!canSubmitReview()"
-    >
-      Enviar revisão
+    <button class="submit-review" (click)="sendReview()" [disabled]="!canSubmitReview()">
+      Concluir e enviar revisão
+      <mat-icon>arrow_forward</mat-icon>
     </button>
-  </div>
-</div>
+  </footer>
+</main>
